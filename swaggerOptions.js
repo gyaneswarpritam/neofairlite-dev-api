@@ -9,11 +9,11 @@ module.exports = {
         },
         servers: [
             {
-                url: 'http://localhost:5001',
+                url: 'http://localhost:5002',
                 description: 'Development server'
             },
             {
-                url: 'http://100.28.3.126:5001',
+                url: 'http://100.28.3.126:5002',
                 description: 'Prod server'
             }
             // Add more servers if needed
