@@ -33,7 +33,7 @@ exports.uploadImageHandler = async function (req, res) {
     fs.writeFileSync(filePath, myFile.buffer);
 
     // Construct the image URL
-    const baseUrl = "https://shapes.neofairs.com/uploads/";
+    const baseUrl = "https://dev.neofairs.com/uploads/";
     const imageUrl = `${baseUrl}${newFileName}`;
 
     res.status(200).json({
