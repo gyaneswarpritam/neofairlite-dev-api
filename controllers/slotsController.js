@@ -112,7 +112,7 @@ exports.listSlots = async (req, res) => {
     // Generate slots for the selected date using dynamic start and end times
     let slots = generateSlotsForDate(selectedDateMoment, startTime, endTime, slotDuration, timeZone);
 
-    // Check existing bookings for conflicts (Assuming `Booking` is a model)
+    // Check existing bookings for conflicts (Assuming `Meeting` is a model)
     const existingBookings = await Booking.find({
       exhibitorId: id,
       slotTime: {
@@ -122,7 +122,7 @@ exports.listSlots = async (req, res) => {
     });
 
     // Log existing bookings for debugging
-    console.log(`Existing Bookings: ${JSON.stringify(existingBookings)}`);
+    console.log(`Existing Meetings: ${JSON.stringify(existingBookings)}`);
 
     // Mark booked slots based on existing bookings
     slots = slots.map(slot => {
@@ -751,7 +751,7 @@ exports.changeStatus = async (req, res) => {
     );
 
     if (!response) {
-      return res.status(404).json({ success: false, message: "Booking not found or already deleted" });
+      return res.status(404).json({ success: false, message: "Meeting not found or already deleted" });
     }
 
     const successObj = successResponse('Slot Status Updated', response);

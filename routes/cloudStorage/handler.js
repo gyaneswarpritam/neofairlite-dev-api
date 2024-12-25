@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { upload_url } = require("../../config/config");
 
 exports.uploadImageHandler = async function (req, res) {
   try {
@@ -33,7 +34,7 @@ exports.uploadImageHandler = async function (req, res) {
     fs.writeFileSync(filePath, myFile.buffer);
 
     // Construct the image URL
-    const baseUrl = "https://dev.neofairs.com/uploads/";
+    const baseUrl = `${upload_url}`;
     const imageUrl = `${baseUrl}${newFileName}`;
 
     res.status(200).json({

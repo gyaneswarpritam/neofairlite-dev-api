@@ -67,7 +67,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: visitor.email,
-      subject: "DEV - Verify Your Email Address",
+      subject: "Verify Your Email Address",
       html: htmlToSend,
     });
     return info.messageId;
@@ -97,7 +97,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "DEV - Welcome to Neofairs – Your Registration is Pending Approval",
+      subject: "Welcome to Neofairs – Your Registration is Pending Approval",
       html: htmlToSend
     });
     return info.messageId;
@@ -136,7 +136,25 @@ emailController.sendForgotPassword = async function (data, password) {
     from: "enquiry@neofairs.com",
     cc: "enquiry@neofairs.com",
     to: data["email"],
-    subject: "DEV - Forgot Password Email",
+    subject: "Forgot Password Email",
+    html: htmlToSend
+  });
+  return info.messageId;
+};
+
+emailController.sendForgotPasswordSuccess = async function (data) {
+  // Read and compile the email template
+  const templatePath = path.join(__dirname, '../templates', 'PASSWORD_RESET_SUCCESS_MAIL.html');
+  const templateSource = fs.readFileSync(templatePath, 'utf-8');
+  const template = handlebars.compile(templateSource);
+
+  const htmlToSend = template({ name: data.name });
+
+  let info = await transporter.sendMail({
+    from: "enquiry@neofairs.com",
+    cc: "enquiry@neofairs.com",
+    to: data["email"],
+    subject: "Password Reset Successfully",
     html: htmlToSend
   });
   return info.messageId;
@@ -169,25 +187,28 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     const htmlToSendVisitor = templateVisitor({
       visitorName: visitor.name,
       visitorEmail: visitor.email,
-      exhibitorName: exhibitor.name,
+      visitorCompany: visitor.companyName,
       slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
+      exhibitorName: exhibitor.name,
+      exhibitorEmail: exhibitor.email,
+      exhibitorCompany: exhibitor.companyName,
     });
     const htmlToSendExhibitor = templateExhibitor({
       visitorName: visitor.name,
-      visitorEmail: visitor.email,
-      exhibitorName: exhibitor.name,
+      visitorCompany: visitor.companyName,
       slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
+      exhibitorName: exhibitor.name,
+      exhibitorEmail: exhibitor.email,
+      exhibitorCompany: exhibitor.companyName,
     });
-
 
     if (visitor.email) {
       // Send email to visitor
       let visitorInfo = await transporter.sendMail({
         from: "enquiry@neofairs.com",
+        cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: status == "approve" ? "DEV - Meeting Confirmation" : "DEV - Meeting Declined",
+        subject: status == "approve" ? "Meeting Confirmation" : "Meeting Declined",
         html: htmlToSendVisitor,
       });
     }
@@ -196,8 +217,9 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
       from: "enquiry@neofairs.com",
+      cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: status == "approve" ? "DEV - Meeting Confirmation" : "DEV - Meeting Declined",
+      subject: status == "approve" ? "Meeting Confirmation" : "Meeting Declined",
       html: htmlToSendExhibitor,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
@@ -226,6 +248,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
     const htmlToSend = template({
       visitorName: visitor.name,
       exhibitorName: exhibitor.name,
+      exhibitorCompany: exhibitor.companyName,
       slotDate: slotDetails.date,
       exhibitorEmail: exhibitor.email
     });
@@ -234,8 +257,9 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       // Send email to visitor
       let visitorInfo = await transporter.sendMail({
         from: "enquiry@neofairs.com",
+        cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: "DEV - Booking Request Submitted",
+        subject: "Meeting Request Submitted",
         html: htmlToSend,
       });
     }
@@ -247,6 +271,8 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
 
     const htmlToSendExhibitor = templateExhibitor({
       visitorName: visitor.name,
+      visitorEmail: visitor.email,
+      visitorCompany: visitor.companyName,
       exhibitorName: exhibitor.name,
       slotDate: slotDetails.date,
       exhibitorEmail: exhibitor.email
@@ -254,14 +280,15 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
       from: "enquiry@neofairs.com",
+      cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "DEV - New Booking Request",
+      subject: "New Meeting Request",
       html: htmlToSendExhibitor,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor?.name} on ${slotDetails.date} has been submitted successfully.`);
     exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has requested a booking with you on ${slotDetails.date}.`);
   } catch (error) {
-    console.error("Error sending booking request email:", error);
+    console.error("Error sending Meeting request email:", error);
     throw error;
   }
 };

@@ -40,19 +40,21 @@ exports.resetPassword = async (req, res) => {
     try {
         // Find exhibitor by ID
         const exhibitor = await Exhibitor.findById(exhibitorId);
-        if (!exhibitor) return res.status(404).json({ message: 'Exhibitor not found' });
+        if (!exhibitor) return res.status(404).json({ status: 400, message: 'Exhibitor not found' });
 
         // Check if old password matches
         const isMatch = await bcrypt.compare(oldPassword, exhibitor.password);
-        if (!isMatch) return res.status(400).json({ message: 'Old password is incorrect' });
+        if (!isMatch) return res.status(400).json({ status: 400, message: 'Old password is incorrect' });
 
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         // Update exhibitor's password
         exhibitor.password = hashedPassword;
         await exhibitor.save();
-
-        res.status(200).json({ message: 'Password successfully reset' });
+        await emailController.sendForgotPasswordSuccess(exhibitor);
+        const successObj = successResponse('Password updated successfully', exhibitor);
+        res.status(successObj.status).send(successObj);
+        // res.status(200).json({ status: 200, message: 'Password successfully reset' });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
