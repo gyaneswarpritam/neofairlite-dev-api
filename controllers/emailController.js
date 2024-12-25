@@ -67,7 +67,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: visitor.email,
-      subject: "Verify Your Email Address",
+      subject: "DEV - Verify Your Email Address",
       html: htmlToSend,
     });
     return info.messageId;
@@ -97,7 +97,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "Welcome to Neofairs – Your Registration is Pending Approval",
+      subject: "DEV - Welcome to Neofairs – Your Registration is Pending Approval",
       html: htmlToSend
     });
     return info.messageId;
@@ -118,7 +118,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
     from: "enquiry@neofairs.com",
     cc: "enquiry@neofairs.com",
     to: data["email"],
-    subject: "Approval Email",
+    subject: "DEV - Approval Email",
     html: htmlToSend
   });
   return info.messageId;
@@ -136,7 +136,7 @@ emailController.sendForgotPassword = async function (data, password) {
     from: "enquiry@neofairs.com",
     cc: "enquiry@neofairs.com",
     to: data["email"],
-    subject: "Forgot Password Email",
+    subject: "DEV -Forgot Password Email",
     html: htmlToSend
   });
   return info.messageId;
@@ -154,7 +154,7 @@ emailController.sendForgotPasswordSuccess = async function (data) {
     from: "enquiry@neofairs.com",
     cc: "enquiry@neofairs.com",
     to: data["email"],
-    subject: "Password Reset Successfully",
+    subject: "DEV - Password Reset Successfully",
     html: htmlToSend
   });
   return info.messageId;
@@ -208,7 +208,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
         from: "enquiry@neofairs.com",
         cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: status == "approve" ? "Meeting Confirmation" : "Meeting Declined",
+        subject: status == "approve" ? "DEV -Meeting Confirmation" : "DEV - Meeting Declined",
         html: htmlToSendVisitor,
       });
     }
@@ -219,7 +219,7 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: status == "approve" ? "Meeting Confirmation" : "Meeting Declined",
+      subject: status == "approve" ? "DEV - Meeting Confirmation" : "DEV - Meeting Declined",
       html: htmlToSendExhibitor,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
@@ -259,7 +259,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
         from: "enquiry@neofairs.com",
         cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: "Meeting Request Submitted",
+        subject: "DEV - Meeting Request Submitted",
         html: htmlToSend,
       });
     }
@@ -282,7 +282,7 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
-      subject: "New Meeting Request",
+      subject: "DEV - New Meeting Request",
       html: htmlToSendExhibitor,
     });
     visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor?.name} on ${slotDetails.date} has been submitted successfully.`);
