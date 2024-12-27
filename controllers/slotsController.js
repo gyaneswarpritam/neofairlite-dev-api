@@ -604,6 +604,7 @@ exports.getVisitorsList = async (req, res) => {
 
         return {
           SerialNo,
+          _id: item?._id,
           name: item?.visitorName || "N/A",
           visitorId: item?.visitorId,
           timeZone: item?.timeZone,

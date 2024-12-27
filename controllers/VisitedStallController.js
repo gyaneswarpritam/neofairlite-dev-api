@@ -88,6 +88,7 @@ exports.getAllVisitedStallForExhibitor = async (req, res) => {
 
         // Map the visited stalls to extract required information
         const stallList = filteredStalls.map(stall => ({
+            _id: stall._id,
             visitor: stall.visitor.name,
             companyName: stall.visitor.companyName,
             visitorEmail: stall.visitor.email,
