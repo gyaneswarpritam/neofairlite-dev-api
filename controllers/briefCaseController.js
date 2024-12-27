@@ -46,6 +46,7 @@ exports.getAllBriefcaseForVisitor = async (req, res) => {
         }
 
         const stallList = Briefcases.map(stall => ({
+            _id: stall._id,
             exhibitor: stall.exhibitor.name,
             companyName: stall.exhibitor.companyName,
             exhibitorEmail: stall.exhibitor.email,

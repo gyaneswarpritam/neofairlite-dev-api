@@ -346,6 +346,7 @@ exports.listBookedSlots = async (req, res) => {
       const formattedTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
 
       return {
+        _id: slot._id,
         SerialNo: index + 1,
         Date: formattedDate,
         Time: formattedTime,
