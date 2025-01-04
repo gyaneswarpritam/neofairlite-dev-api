@@ -143,7 +143,9 @@ exports.childLogin = async (req, res, next) => {
                 // Create JWT Payload
                 const payload = {
                     id: exhibitor.id,
-                    email: exhibitor.email
+                    email: exhibitor.email,
+                    exhibitorId: exhibitor.exhibitor,
+                    role: 'Stall Manager'
                 };
                 // Sign token
                 jwt.sign(
@@ -155,7 +157,9 @@ exports.childLogin = async (req, res, next) => {
                             success: true,
                             token: 'Bearer ' + token,
                             id: exhibitor.id,
-                            name: exhibitor.name
+                            name: exhibitor.name,
+                            exhibitorId: exhibitor.exhibitor,
+                            role: 'Stall Manager'
                         });
                     }
                 );
