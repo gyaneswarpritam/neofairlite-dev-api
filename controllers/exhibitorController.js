@@ -1,12 +1,13 @@
 // controllers/exhibitorController.js
 const bcrypt = require('bcryptjs');
 const Exhibitor = require('../models/Exhibitor');
-const { exhibitorSchema, exhibitorLoginSchema } = require('../validators/exhibitorValidator');
+const { exhibitorSchema, exhibitorLoginSchema, exhibitorChildSchema } = require('../validators/exhibitorValidator');
 const schemaValidator = require('../validators/schemaValidator');
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/config');
 const { successResponse, notFoundResponse } = require('../utils/sendResponse');
 const emailController = require("./emailController");
+const ExhibitorChildUser = require('../models/ExhibitorChildUser');
 
 exports.register = async (req, res) => {
     try {
@@ -275,5 +276,45 @@ exports.getExhibitorById = async (req, res) => {
         res.status(successObj.status).send(successObj);
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+exports.addUser = async (req, res) => {
+    try {
+        const validation = schemaValidator(exhibitorChildSchema, req.body);
+        if (validation.success) {
+            const { email } = req.body;
+            const existingExhibitorChild = await ExhibitorChildUser.findOne({ email });
+            if (existingExhibitorChild) {
+                return res.status(400).json({ status: 0, message: 'Email already exists' });
+            }
+            req.body.password = await bcrypt.hash(req.body.password, 10);
+            const exhibitorChild = new ExhibitorChildUser(req.body);
+            const exhibitorChildData = await exhibitorChild.save();
+            await emailController.sendExhibitorChildRegisteredMail(exhibitorChildData._id);
+
+            const successObj = successResponse('Exhibitor Add User added successfully', exhibitorChildData)
+            res.status(successObj.status).send(successObj);
+        } else {
+            res.status(401).json({ message: validation.errors });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 0, message: 'Internal server error' });
+    }
+};
+
+exports.fetchAllChildExhibitor = async (req, res) => {
+    try {
+        const records = await ExhibitorChildUser.find({})
+        const resp = {
+            status: 200,
+            message: "List of Child Exhibitors",
+            data: records,
+        };
+        res.status(resp.status).send(resp);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

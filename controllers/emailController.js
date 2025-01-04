@@ -14,6 +14,7 @@ let nodemailer = require("nodemailer");
 const Exhibitor = require("../models/Exhibitor");
 const Visitor = require("../models/Visitor");
 const { sendPhoneMessage } = require("../utils/otpService");
+const ExhibitorChildUser = require('../models/ExhibitorChildUser');
 var transporter = nodemailer.createTransport(
   ses({
     accessKeyId: awsKeys.key,
@@ -97,6 +98,36 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
       to: exhibitor.email,
+      subject: "DEV - Welcome to Neofairs – Your Registration is Pending Approval",
+      html: htmlToSend
+    });
+    return info.messageId;
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw error;
+  }
+};
+
+emailController.sendExhibitorChildRegisteredMail = async function (exhibitorId) {
+  try {
+    const exhibitorChild = await ExhibitorChildUser.findById(exhibitorId);
+
+    if (!exhibitorChild) {
+      throw new Error("exhibitor not found");
+    }
+
+    // Read and compile the email template
+    const templatePath = path.join(__dirname, '../templates', 'REGISTRATION_CONFIRMATION_EXHIBITOR_MAIL.html');
+    const templateSource = fs.readFileSync(templatePath, 'utf-8');
+    const template = handlebars.compile(templateSource);
+
+    const htmlToSend = template({ name: exhibitorChild.name });
+
+    // Send the verification email
+    let info = await transporter.sendMail({
+      from: "enquiry@neofairs.com",
+      cc: "enquiry@neofairs.com",
+      to: exhibitorChild.email,
       subject: "DEV - Welcome to Neofairs – Your Registration is Pending Approval",
       html: htmlToSend
     });

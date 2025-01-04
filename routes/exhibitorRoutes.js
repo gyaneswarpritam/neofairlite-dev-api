@@ -49,6 +49,8 @@ router.post('/forgot-password', exhibitorController.forgotPassword);
 router.post('/stall', passport.authenticate('jwt-exhibitor', { session: false }), stallController.createStall);
 router.get('/stall/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallController.getStallById);
 router.get('/stall-by-exhibitor/:exhibitor', passport.authenticate('jwt-exhibitor', { session: false }), stallController.getStallByExhibitor);
+router.post('/add-user', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.addUser);
+router.get('/user-list', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.fetchAllChildExhibitor);
 router.put('/stall/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallController.updateStall);
 router.delete('/stall/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallController.deleteStall);
 router.get('/loggedin-user', passport.authenticate('jwt-exhibitor', { session: false }), visitorController.getAllLoggedInVisitor);
