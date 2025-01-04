@@ -116,6 +116,61 @@ exports.login = async (req, res, next) => {
     }
 };
 
+exports.childLogin = async (req, res, next) => {
+    try {
+        const validation = schemaValidator(exhibitorLoginSchema, req.body);
+        if (validation.success) {
+            const { email, password } = req.body;
+            const exhibitor = await ExhibitorChildUser.findOne({ email });
+            if (!exhibitor) {
+                return res.status(404).json({ status: 0, message: 'Email ID doesn’t exist. Please register' });
+            } else if (!exhibitor.active) {
+                return res.status(404).json({ status: 0, message: 'Pending Approval. Please try again once approved' });
+            }
+
+            // Check password
+            const isMatch = await bcrypt.compare(password, exhibitor.password);
+            if (isMatch) {
+                const currentDate = new Date();
+                const utcFormat = currentDate.toISOString();
+                const updatedLoggeduser = await ExhibitorChildUser.findByIdAndUpdate(exhibitor.id,
+                    {
+                        loggedIn: true,
+                        loggedInIP: req.body.loggedInIP,
+                        loggedInTime: utcFormat
+                    }, { new: true });
+
+                // Create JWT Payload
+                const payload = {
+                    id: exhibitor.id,
+                    email: exhibitor.email
+                };
+                // Sign token
+                jwt.sign(
+                    payload,
+                    jwtSecret,
+                    { expiresIn: '3650d' },
+                    (err, token) => {
+                        res.json({
+                            success: true,
+                            token: 'Bearer ' + token,
+                            id: exhibitor.id,
+                            name: exhibitor.name
+                        });
+                    }
+                );
+            } else {
+                return res.status(400).json({ status: 0, message: 'Username/Password is incorrect' });
+            }
+        } else {
+            res.status(401).json({ status: 0, message: validation.errors });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: 0, message: 'Internal server error' });
+    }
+};
+
 function generateRandomPassword(length = 8) {
     const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';

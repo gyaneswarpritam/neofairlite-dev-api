@@ -43,6 +43,7 @@ passport.use('jwt-exhibitor', new JwtStrategy(jwtOptions, (jwtPayload, done) => 
 
 router.post('/register', exhibitorController.register);
 router.post('/login', exhibitorController.login);
+router.post('/child-login', exhibitorController.childLogin);
 router.post('/forgot-password', exhibitorController.forgotPassword);
 
 /*Stall Route*/

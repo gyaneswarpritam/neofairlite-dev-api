@@ -16,6 +16,7 @@ const Review = require('../models/Review');
 const Like = require('../models/Like');
 const ProductVisited = require('../models/ProductVisited');
 const { successResponse } = require('../utils/sendResponse');
+const ExhibitorChildUser = require('../models/ExhibitorChildUser');
 
 exports.register = async (req, res) => {
     try {
@@ -199,6 +200,57 @@ exports.fetchAllExhibitor = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+exports.fetchAllExhibitorChild = async (req, res) => {
+    try {
+        const reqBody = req.body;
+        const { active, blocked, reject } = req.query;
+        console.log(req.query, "itemPerPage")
+        const resultsPerPage =
+            reqBody["itemPerPage"] > 0 ? reqBody["itemPerPage"] : 10;
+        const page = reqBody["page"] >= 1 ? reqBody["page"] : 1;
+        const skip = resultsPerPage * (page - 1);
+        const search = {};
+        search["_id"] = { $ne: req.authID };
+        search["deleted"] = { $ne: true };
+        if (reqBody["email"]) {
+            search["email"] = reqBody["email"];
+        }
+        if (reqBody["name"]) {
+            search["name"] = { $regex: reqBody["name"], $options: "i" };
+        }
+        if (reqBody["phone"]) {
+            search["phone"] = reqBody["phone"];
+        }
+        if (active !== undefined) {
+            search["active"] = active;
+        }
+        if (blocked !== undefined) {
+            search["blocked"] = blocked;
+        }
+        if (reject !== undefined) {
+            search["reject"] = reject;
+        }
+        const totalrecords = await ExhibitorChildUser.countDocuments(search);
+        const records = await ExhibitorChildUser.find(search)
+            .skip(skip)
+            .limit(resultsPerPage)
+            .lean();
+        const resp = {
+            status: 200,
+            message: "List of Exhibitors",
+            data: records,
+            totalCount: totalrecords,
+            totalPages: parseInt(Math.ceil(totalrecords / resultsPerPage)),
+        };
+        res.status(resp.status).send(resp);
+
+        // const allExhibitors = await Exhibitor.find();
+        // res.json({ data: allExhibitors });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 exports.approveVisitor = async (req, res) => {
     const { visitorId } = req.params;
@@ -220,6 +272,22 @@ exports.approveExhibitor = async (req, res) => {
     const { exhibitorId } = req.params;
     try {
         const exhibitor = await Exhibitor.findByIdAndUpdate(exhibitorId, req.body, { new: true });
+        if (!exhibitor) {
+            return res.status(404).json({ message: 'Exhibitor not found' });
+        }
+        const emailData = await emailController.sendApprovalExhibitorMail(exhibitor);
+        // await sendEmail(exhibitor.email, 'Approval Notification', 'Your registration has been approved.');
+        // await sendSMS(exhibitor.phoneNumber, 'Congratulations! Your registration has been approved.');
+        res.json({ message: 'Exhibitor approved successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+exports.approveExhibitorChild = async (req, res) => {
+    const { exhibitorId } = req.params;
+    try {
+        const exhibitor = await ExhibitorChildUser.findByIdAndUpdate(exhibitorId, req.body, { new: true });
         if (!exhibitor) {
             return res.status(404).json({ message: 'Exhibitor not found' });
         }

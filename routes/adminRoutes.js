@@ -42,10 +42,14 @@ router.post('/fetch-all-visitor', passport.authenticate('jwt-admin', { session: 
     adminController.fetchAllVisitor);
 router.post('/fetch-all-exhibitor', passport.authenticate('jwt-admin', { session: false }),
     adminController.fetchAllExhibitor);
+router.post('/fetch-exhibitor-child', passport.authenticate('jwt-admin', { session: false }),
+    adminController.fetchAllExhibitorChild);
 router.put('/approve-visitor/:visitorId', passport.authenticate('jwt-admin', { session: false }),
     adminController.approveVisitor);
 router.put('/approve-exhibitor/:exhibitorId', passport.authenticate('jwt-admin', { session: false }),
     adminController.approveExhibitor);
+router.put('/approve-exhibitor-child/:exhibitorId', passport.authenticate('jwt-admin', { session: false }),
+    adminController.approveExhibitorChild);
 
 /*Settings Route*/
 router.post('/settings', passport.authenticate('jwt-admin', { session: false }), settingController.createSetting);
