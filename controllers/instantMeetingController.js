@@ -71,7 +71,10 @@ exports.getInstantMeetingByExhibitorId = async (req, res) => {
     try {
         const instantMeeting = await InstantMeeting.find({
             exhibitor: req.params.exhibitorId,
-            // approve: false,
+            $or: [
+                { inProgress: true },
+                { approve: false }
+            ],
             cancelled: false,
             rejected: false,
             completed: false

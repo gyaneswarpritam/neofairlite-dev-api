@@ -18,10 +18,15 @@ var instantMeetingSchema = new mongoose.Schema(
             ref: "Visitor",
             required: true,
         },
+        stallManagerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "ExhibitorChildUser",
+        },
         approve: { type: Boolean, default: false },
         cancelled: { type: Boolean, default: false },
         rejected: { type: Boolean, default: false },
         completed: { type: Boolean, default: false },
+        inProgress: { type: Boolean, default: false },
     },
     {
         timestamps: true,
