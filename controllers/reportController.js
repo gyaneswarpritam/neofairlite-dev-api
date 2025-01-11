@@ -22,12 +22,6 @@ exports.exhibitorReport = async (req, res) => {
     try {
         const exhibitors = await Exhibitor.find({});
 
-        if (!exhibitors || exhibitors.length === 0) {
-            const notFound = notFoundResponse('Exhibitor entries not found');
-            res.status(notFound.status).send(notFound);
-            return;
-        }
-
         const successObj = successResponse('Exhibitor List', exhibitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
