@@ -83,25 +83,36 @@ exports.verifyEmail = async (req, res) => {
     const { token } = req.query;
 
     try {
-        // Find the visitor by the verification token
-        const visitor = await Visitor.findOne({
+        const visitorActive = await Visitor.findOne({
             verificationToken: token,
-            verificationTokenExpires: { $gt: Date.now() },
+            isVerified: true,
         });
 
-        if (!visitor) {
-            return res.status(400).send("Invalid or expired token");
+        if (!visitorActive) {
+            // Find the visitor by the verification token
+            const visitor = await Visitor.findOne({
+                verificationToken: token,
+                verificationTokenExpires: { $gt: Date.now() },
+            });
+
+            if (!visitor) {
+                return res.status(400).send("Invalid or expired token");
+            }
+
+            // Update the visitor to mark email as verified
+            visitor.isVerified = true;
+            visitor.emailVerified = true;
+            // visitor.verificationToken = undefined; // Clear the token
+            // visitor.verificationTokenExpires = undefined;
+            await visitor.save();
+
+            const successObj = successResponse('Email verified successfully!', visitor)
+            res.status(successObj.status).send(successObj);
+        } else {
+            const data = { verified: true };
+            const successObj = successResponse('Already verified. Please login', data);
+            res.status(successObj.status).send(successObj);
         }
-
-        // Update the visitor to mark email as verified
-        visitor.isVerified = true;
-        visitor.emailVerified = true;
-        visitor.verificationToken = undefined; // Clear the token
-        visitor.verificationTokenExpires = undefined;
-        await visitor.save();
-
-        const successObj = successResponse('Email verified successfully!', visitor)
-        res.status(successObj.status).send(successObj);
     } catch (error) {
         console.error("Error verifying email:", error);
         res.status(500).send("An error occurred");

@@ -45,7 +45,7 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
       visitorId,
       {
         verificationToken: verificationToken,
-        verificationTokenExpires: Date.now() + 2592000000, // 30 days expiration
+        verificationTokenExpires: Date.now() + 365 * 24 * 60 * 60 * 1000,
       },
       { new: true }
     );
