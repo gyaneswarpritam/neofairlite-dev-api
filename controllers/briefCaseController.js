@@ -37,38 +37,44 @@ exports.getAllBriefcaseForVisitor = async (req, res) => {
             })
             .populate({
                 path: 'product',
-                select: 'title url locked like review active deleted' // Adjust fields as needed
+                select: 'title url locked like review active'
             })
             .exec();
-        if (!Briefcases || Briefcases.length === 0) {
+
+        // Filter out entries where product is null, missing, or marked as deleted
+        const filteredBriefcases = Briefcases.filter(stall => stall.product?._id);
+
+        if (!filteredBriefcases.length) {
             const notFoundObj = notFoundResponse('No Briefcase data for this visitor');
             return res.status(notFoundObj.status).send(notFoundObj);
         }
 
-        const stallList = Briefcases.map(stall => ({
+        const stallList = filteredBriefcases.map(stall => ({
             _id: stall._id,
-            exhibitor: stall.exhibitor.name,
-            companyName: stall.exhibitor.companyName,
-            exhibitorEmail: stall.exhibitor.email,
-            exhibitorPhone: stall.exhibitor.phone,
-            stallName: stall.stall.stallName,
-            productName: stall.product.title,
-            productUrl: stall.product.url,
-            productLocked: stall.product.locked,
-            productLike: stall.product.like,
-            productReview: stall.product.review,
-            productActive: stall.product.active,
-            productDeleted: stall.product.deleted,
-            catalog: stall.catalog,
+            exhibitor: stall.exhibitor?.name || '',
+            companyName: stall.exhibitor?.companyName || '',
+            exhibitorEmail: stall.exhibitor?.email || '',
+            exhibitorPhone: stall.exhibitor?.phone || '',
+            stallName: stall.stall?.stallName || '',
+            productName: stall.product?.title || '',
+            productUrl: stall.product?.url || '',
+            productLocked: stall.product?.locked || false,
+            productLike: stall.product?.like || 0,
+            productReview: stall.product?.review || 0,
+            productActive: stall.product?.active || false,
+            catalog: stall.catalog || '',
             id: stall._id,
             updatedAt: stall.updatedAt
         }));
+
         const successObj = successResponse('Visited Stall List', stallList);
         res.status(successObj.status).send(successObj);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: error.message });
     }
 };
+
 exports.getAllBriefcaseForExhibitor = async (req, res) => {
     try {
         const Briefcases = await Briefcase.find({ exhibitor: req.params.exhibitorId, catalog: true })
