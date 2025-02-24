@@ -10,6 +10,7 @@ var exhibitorSchema = new mongoose.Schema(
         password: { type: String, required: true },
         loggedInTime: { type: String, default: '' },
         loggedInIP: { type: String, default: '' },
+        loggedIn: { type: Boolean, default: false },
         deleted: { type: Boolean, default: false },
         active: { type: Boolean, default: false },
         reject: { type: Boolean, default: false },
