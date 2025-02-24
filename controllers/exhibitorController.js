@@ -116,6 +116,21 @@ exports.login = async (req, res, next) => {
     }
 };
 
+// Logout a loggedOut
+exports.loggedOut = async (req, res) => {
+    try {
+        const loggedOutUpdate = await Exhibitor.findByIdAndUpdate(req.params.id, { loggedIn: false }, { new: true });
+        if (loggedOutUpdate) {
+            res.json({ success: true, message: "Logged out" });
+        } else {
+            res.status(401).json({ message: "Something wrong" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 exports.childLogin = async (req, res, next) => {
     try {
         const validation = schemaValidator(exhibitorLoginSchema, req.body);

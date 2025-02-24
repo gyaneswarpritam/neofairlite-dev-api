@@ -45,6 +45,7 @@ router.post('/register', exhibitorController.register);
 router.post('/login', exhibitorController.login);
 router.post('/child-login', exhibitorController.childLogin);
 router.post('/forgot-password', exhibitorController.forgotPassword);
+router.get('/logout/:id', exhibitorController.loggedOut);
 
 /*Stall Route*/
 router.post('/stall', passport.authenticate('jwt-exhibitor', { session: false }), stallController.createStall);
