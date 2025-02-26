@@ -351,6 +351,7 @@ exports.listBookedSlots = async (req, res) => {
         Date: formattedDate,
         Time: formattedTime,
         Timezone: timezone,
+        ExhibitorId: slot.exhibitorId._id || 'N/A', // Default to 'N/A' if company name is unavailable
         ExhibitorCompanyName: slot.exhibitorId.companyName || 'N/A', // Default to 'N/A' if company name is unavailable
         Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable
         MeetingLink: slot.meetingLink || '', // Default to empty if meeting link is not available
@@ -478,6 +479,7 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
         Time: formattedTime,
         TimeRange: timeRange, // Show time as start time - end time
         Timezone: timezone,
+        VisitorId: slot.visitorId._id,
         VisitorName: slot.visitorId.name || 'N/A', // Default to 'N/A' if visitor name is unavailable
         VisitorEmail: slot.visitorId.email || 'N/A', // Default to 'N/A' if visitor email is unavailable
         Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable

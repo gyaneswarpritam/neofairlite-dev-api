@@ -19,6 +19,7 @@ const galleryImageListController = require('../controllers/galleryImageListContr
 const galleryVideoController = require('../controllers/galleryVideoController');
 const stallVideoController = require('../controllers/stallVideoController');
 const auditoriumController = require('../controllers/auditoriumController');
+const emailController = require("../controllers/emailController");
 
 // Configure JWT Strategy
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -90,6 +91,7 @@ router.delete('/stall-video/:id', passport.authenticate('jwt-exhibitor', { sessi
 router.post('/reset-password', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.resetPassword);
 router.get('/list-booked-slots', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.listBookedSlotsExhibitor);
 router.post('/book-slot-email', passport.authenticate('jwt-exhibitor', { session: false }), slotsController.sendBookingApproveRejectMail);
+router.post('/notify-meeting', passport.authenticate('jwt-exhibitor', { session: false }), emailController.sendBookingNotifyExhibitorMail);
 
 router.get('/auditorium', passport.authenticate('jwt-exhibitor', { session: false }), auditoriumController.getAllAuditorium);
 router.get('/profile/:id', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.getExhibitorById);

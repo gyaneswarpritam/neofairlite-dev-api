@@ -324,16 +324,15 @@ emailController.sendBookingRequestMail = async function (visitorId, exhibitorId,
   }
 };
 
-emailController.sendBookingNotifyVisitorMail = async function (visitorId, exhibitorId, slotDetails) {
+emailController.sendBookingNotifyVisitorMail = async (req, res) => {
+  const { visitorId, exhibitorId, slotDetails, minutesLeft } = req.body;
   try {
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);
     const exhibitor = await Exhibitor.findById(exhibitorId);
-
     if (!visitor || !exhibitor) {
       throw new Error("Visitor or Exhibitor not found");
     }
-
     // Read and compile the email template
     const templatePath = path.join(__dirname, '../templates', 'MEETING_REQUEST_NOTIFY_VISITOR_MAIL.html');
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
@@ -343,8 +342,9 @@ emailController.sendBookingNotifyVisitorMail = async function (visitorId, exhibi
       visitorName: visitor.name,
       exhibitorName: exhibitor.name,
       exhibitorCompany: exhibitor.companyName,
-      slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
+      slotDate: slotDetails.Date,
+      minutesLeft: minutesLeft,
+      exhibitorEmail: exhibitor.email,
     });
 
     if (visitor.email) {
@@ -358,36 +358,15 @@ emailController.sendBookingNotifyVisitorMail = async function (visitorId, exhibi
       });
     }
 
-    // Read and compile the email template
-    const templatePathExhibitor = path.join(__dirname, '../templates', 'MEETING_REQUEST_EXHIBITOR_MAIL.html');
-    const templateSourceExhibitor = fs.readFileSync(templatePathExhibitor, 'utf-8');
-    const templateExhibitor = handlebars.compile(templateSourceExhibitor);
-
-    const htmlToSendExhibitor = templateExhibitor({
-      visitorName: visitor.name,
-      visitorEmail: visitor.email,
-      visitorCompany: visitor.companyName,
-      exhibitorName: exhibitor.name,
-      slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
-    });
-    // Send email to exhibitor
-    let exhibitorInfo = await transporter.sendMail({
-      from: "enquiry@neofairs.com",
-      cc: "enquiry@neofairs.com",
-      to: exhibitor.email,
-      subject: "DEV - New Meeting Request",
-      html: htmlToSendExhibitor,
-    });
-    visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor?.name} on ${slotDetails.date} has been submitted successfully.`);
-    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has requested a booking with you on ${slotDetails.date}.`);
+    visitor.phone && sendPhoneMessage(visitor.phone, `Your meeting with ${exhibitor?.name} on ${slotDetails.date} will be started in ${slotDetails.minutesLeft} minutes.`);
   } catch (error) {
     console.error("Error sending Meeting request email:", error);
     throw error;
   }
 };
 
-emailController.sendBookingNotifyExhibitorMail = async function (visitorId, exhibitorId, slotDetails) {
+emailController.sendBookingNotifyExhibitorMail = async (req, res) => {
+  const { visitorId, exhibitorId, slotDetails, minutesLeft } = req.body;
   try {
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);
@@ -398,31 +377,7 @@ emailController.sendBookingNotifyExhibitorMail = async function (visitorId, exhi
     }
 
     // Read and compile the email template
-    const templatePath = path.join(__dirname, '../templates', 'MEETING_REQUEST_NOTIFY_EXHIBITOR_MAIL.html');
-    const templateSource = fs.readFileSync(templatePath, 'utf-8');
-    const template = handlebars.compile(templateSource);
-
-    const htmlToSend = template({
-      visitorName: visitor.name,
-      exhibitorName: exhibitor.name,
-      exhibitorCompany: exhibitor.companyName,
-      slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
-    });
-
-    if (visitor.email) {
-      // Send email to visitor
-      let visitorInfo = await transporter.sendMail({
-        from: "enquiry@neofairs.com",
-        cc: "enquiry@neofairs.com",
-        to: visitor.email,
-        subject: "DEV - Meeting Request Submitted",
-        html: htmlToSend,
-      });
-    }
-
-    // Read and compile the email template
-    const templatePathExhibitor = path.join(__dirname, '../templates', 'MEETING_REQUEST_EXHIBITOR_MAIL.html');
+    const templatePathExhibitor = path.join(__dirname, '../templates', 'MEETING_REQUEST_NOTIFY_EXHIBITOR_MAIL.html');
     const templateSourceExhibitor = fs.readFileSync(templatePathExhibitor, 'utf-8');
     const templateExhibitor = handlebars.compile(templateSourceExhibitor);
 
@@ -431,7 +386,8 @@ emailController.sendBookingNotifyExhibitorMail = async function (visitorId, exhi
       visitorEmail: visitor.email,
       visitorCompany: visitor.companyName,
       exhibitorName: exhibitor.name,
-      slotDate: slotDetails.date,
+      slotDate: slotDetails.Date,
+      minutesLeft: minutesLeft,
       exhibitorEmail: exhibitor.email
     });
     // Send email to exhibitor
@@ -442,8 +398,7 @@ emailController.sendBookingNotifyExhibitorMail = async function (visitorId, exhi
       subject: "DEV - New Meeting Request",
       html: htmlToSendExhibitor,
     });
-    visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor?.name} on ${slotDetails.date} has been submitted successfully.`);
-    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has requested a booking with you on ${slotDetails.date}.`);
+    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has meeting with you on ${slotDetails.date} in ${slotDetails.minutesLeft} minutes.`);
   } catch (error) {
     console.error("Error sending Meeting request email:", error);
     throw error;

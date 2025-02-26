@@ -86,6 +86,7 @@ router.post('/book-slot-email', passport.authenticate('jwt-visitor', { session: 
 router.get('/get-exhibitionDate', passport.authenticate('jwt-visitor', { session: false }), slotsController.getExhibitionDate);
 router.get('/list-slots', passport.authenticate('jwt-visitor', { session: false }), slotsController.listSlots);
 router.get('/list-booked-slots', passport.authenticate('jwt-visitor', { session: false }), slotsController.listBookedSlots);
+router.post('/notify-meeting', passport.authenticate('jwt-visitor', { session: false }), emailController.sendBookingNotifyVisitorMail);
 
 router.post('/instant-meeting', passport.authenticate('jwt-visitor', { session: false }), instantMeetingController.createInstantMeeting);
 router.get('/instant-meeting/:id', passport.authenticate('jwt-visitor', { session: false }), instantMeetingController.getInstantMeetingById);
