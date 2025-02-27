@@ -358,7 +358,7 @@ emailController.sendBookingNotifyVisitorMail = async (req, res) => {
       });
     }
 
-    visitor.phone && sendPhoneMessage(visitor.phone, `Your meeting with ${exhibitor?.name} on ${slotDetails.date} will be started in ${slotDetails.minutesLeft} minutes.`);
+    visitor.phone && sendPhoneMessage(visitor.phone, `Your meeting with ${exhibitor?.name} on ${slotDetails.Date} will be started in ${minutesLeft} minutes.`);
   } catch (error) {
     console.error("Error sending Meeting request email:", error);
     throw error;
@@ -398,7 +398,7 @@ emailController.sendBookingNotifyExhibitorMail = async (req, res) => {
       subject: "DEV - New Meeting Request",
       html: htmlToSendExhibitor,
     });
-    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has meeting with you on ${slotDetails.date} in ${slotDetails.minutesLeft} minutes.`);
+    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has meeting with you on ${slotDetails.Date} in ${minutesLeft} minutes.`);
   } catch (error) {
     console.error("Error sending Meeting request email:", error);
     throw error;
