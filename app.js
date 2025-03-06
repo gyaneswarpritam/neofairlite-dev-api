@@ -62,7 +62,11 @@ const server = app.listen(PORT, () => console.log(`Server running on port ${PORT
 const io = socket(server, {
     cors: {
         origin: "*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type"],
+        credentials: true,
     },
+    transports: ["websocket", "polling"], // Ensure WebSocket is enabled
 });
 
 global.onlineUsers = new Map();
