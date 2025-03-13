@@ -151,6 +151,7 @@ exports.getAllBriefcaseAdmin = async (req, res) => {
         }
 
         const stallList = Briefcases.map(stall => ({
+            _id: stall._id,
             visitor: stall.visitor.name,
             visitorCompanyName: stall.visitor.companyName,
             visitorEmail: stall.visitor.email,
@@ -177,7 +178,6 @@ exports.getAllBriefcaseAdmin = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 exports.updateBriefcase = async (req, res) => {
     try {
         const briefCase = await Briefcase.findByIdAndUpdate(req.params.id, req.body, { new: true });

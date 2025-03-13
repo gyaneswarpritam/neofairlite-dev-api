@@ -114,41 +114,35 @@ exports.getVisitorsByMostViewed = async (req, res) => {
     const { productListId } = req.params;
 
     try {
-        // Find all ProductVisited entries by productList ID and populate the visitor details
-        const productVisitedEntries = await ProductVisited.find({ productList: productListId })
-            .populate({
-                path: 'visitor',
-                select: 'name email phone companyName',
-                options: { strictPopulate: false }
-            })
-            .populate({
-                path: 'productList',
-                select: 'title url',
-                options: { strictPopulate: false }
-            });
+        let query = {};
+
+        // If productListId is provided, filter by it
+        if (productListId) {
+            query.productList = productListId;
+        }
+
+        // Find ProductVisited entries and populate visitor details
+        const productVisitedEntries = await ProductVisited.find(query)
+            .populate('visitor', 'name email phone companyName')
+            .populate('productList', 'title');
 
         // If no ProductVisited entries are found, return a 404 error
         if (!productVisitedEntries || productVisitedEntries.length === 0) {
-            return res.status(404).json({ message: 'No visitors found for this product list' });
+            return res.status(404).json({ message: 'No visitors found' });
         }
-        // Filter out entries where the visitor is null (due to deletion)
-        const filteredProductVisitedEntries = productVisitedEntries.filter(stall => stall.visitor !== null);
-        // Extract visitor details from the ProductVisited entries and combine name into fullName
-        const visitors = filteredProductVisitedEntries.map(entry => {
-            const { name, email, phone, companyName } = entry.visitor;
-            const { title, url } = entry.productList;
-            const { updatedAt } = entry;
-            const visitorName = `${name || ''} `.trim();
-            const visitorEmail = email;
-            const visitorPhone = phone;
+
+        // Extract visitor details
+        const visitors = productVisitedEntries.map(entry => {
+            const { _id, name, email, phone, companyName } = entry.visitor;
             return {
-                visitorName,
-                visitorEmail,
-                visitorPhone,
+                _id,
+                title: entry.productList.title,
+                visitorName: `${name || ''}`.trim(),
+                visitorEmail: email,
+                visitorPhone: phone,
                 companyName,
-                title,
-                url,
-                updatedAt
+                createdAt: entry.createdAt,
+                updatedAt: entry.updatedAt
             };
         });
 
@@ -164,41 +158,35 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
     const { productListId } = req.params;
 
     try {
-        // Find all Review entries by productList ID and populate the visitor details
-        const reviewEntries = await Review.find({ productList: productListId })
-            .populate({
-                path: 'visitor',
-                select: 'name email phone companyName',
-                options: { strictPopulate: false }
-            })
-            .populate({
-                path: 'productList',
-                select: 'title url',
-                options: { strictPopulate: false }
-            });
+        let query = {};
 
-        // If no ProductVisited entries are found, return a 404 error
-        if (!reviewEntries || reviewEntries.length === 0) {
-            return res.status(404).json({ message: 'No visitors found for this product list' });
+        // If productListId is provided, filter by it
+        if (productListId) {
+            query.productList = productListId;
         }
-        // Filter out entries where the visitor is null (due to deletion)
-        const filteredReviewEntries = reviewEntries.filter(stall => stall.visitor !== null);
-        // Extract visitor details from the ProductVisited entries and combine name into fullName
-        const visitors = filteredReviewEntries.map(entry => {
-            const { name, email, phone, companyName } = entry.visitor;
-            const { title, url } = entry.productList;
-            const { updatedAt } = entry;
-            const visitorName = `${name || ''}`.trim();
-            const visitorEmail = email;
-            const visitorPhone = phone;
+
+        // Find Review entries and populate visitor details
+        const reviewEntries = await Review.find(query)
+            .populate('visitor', 'name email phone companyName')
+            .populate('productList', 'title');
+
+        // If no review entries are found, return a 404 error
+        if (!reviewEntries || reviewEntries.length === 0) {
+            return res.status(404).json({ message: 'No visitors found' });
+        }
+
+        // Extract visitor details
+        const visitors = reviewEntries.map(entry => {
+            const { _id, name, email, phone, companyName } = entry.visitor;
             return {
-                visitorName,
-                visitorEmail,
-                visitorPhone,
+                _id,
+                title: entry.productList.title,
+                visitorName: `${name || ''}`.trim(),
+                visitorEmail: email,
+                visitorPhone: phone,
                 companyName,
-                title,
-                url,
-                updatedAt
+                createdAt: entry.createdAt,
+                updatedAt: entry.updatedAt
             };
         });
 
@@ -213,41 +201,36 @@ exports.getVisitorsByMostLiked = async (req, res) => {
     const { productListId } = req.params;
 
     try {
-        // Find all Like entries by productList ID and populate the visitor details
-        const likeEntries = await Like.find({ productList: productListId })
-            .populate({
-                path: 'visitor',
-                select: 'name email phone companyName',
-                options: { strictPopulate: false }
-            })
-            .populate({
-                path: 'productList',
-                select: 'title url',
-                options: { strictPopulate: false }
-            });
+        let query = {};
 
-        // If no ProductVisited entries are found, return a 404 error
-        if (!likeEntries || likeEntries.length === 0) {
-            return res.status(404).json({ message: 'No visitors found for this product list' });
+        // If productListId is provided, filter by it
+        if (productListId) {
+            query.productList = productListId;
         }
-        // Filter out entries where the visitor is null (due to deletion)
-        const filteredLikeEntries = likeEntries.filter(stall => stall.visitor !== null);
-        // Extract visitor details from the ProductVisited entries and combine name into fullName
-        const visitors = filteredLikeEntries.map(entry => {
-            const { name, email, phone, companyName } = entry.visitor;
-            const { title, url } = entry.productList;
-            const { updatedAt } = entry;
-            const visitorName = `${name || ''} `.trim();
-            const visitorEmail = email;
-            const visitorPhone = phone;
+
+        // Find Like entries and populate visitor details
+        const likeEntries = await Like.find(query)
+            .populate('visitor', 'name email phone companyName')
+            .populate('productList', 'title');
+
+        // If no like entries are found, return a 404 error
+        if (!likeEntries || likeEntries.length === 0) {
+            return res.status(404).json({ message: 'No visitors found' });
+        }
+
+        // Extract visitor details
+        const visitors = likeEntries.map(entry => {
+            const { _id, name, email, phone, companyName } = entry.visitor;
             return {
-                visitorName,
-                visitorEmail,
-                visitorPhone,
+                _id,
+                title: entry.productList.title,
+                visitorName: `${name || ''}`.trim(),
+                visitorEmail: email,
+                visitorPhone: phone,
+                visitorPhone: phone,
                 companyName,
-                title,
-                url,
-                updatedAt
+                createdAt: entry.createdAt,
+                updatedAt: entry.updatedAt
             };
         });
 
@@ -257,4 +240,5 @@ exports.getVisitorsByMostLiked = async (req, res) => {
         res.status(500).json({ message: 'Error fetching visitor details', error });
     }
 };
+
 
