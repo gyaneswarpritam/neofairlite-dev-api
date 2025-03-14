@@ -103,6 +103,7 @@ exports.getAllBriefcaseForExhibitor = async (req, res) => {
         const filteredStalls = Briefcases.filter(stall => stall.visitor !== null);
 
         const stallList = filteredStalls.map(stall => ({
+            _id: stall?._id,
             visitor: stall.visitor.name,
             companyName: stall.visitor.companyName,
             visitorEmail: stall.visitor.email,
