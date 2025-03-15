@@ -543,10 +543,10 @@ exports.getVisitorsList = async (req, res) => {
   try {
     const { id } = req.query;
 
-    // Use aggregation to match bookings based on exhibitorId
+    // Use aggregation to fetch bookings and populate visitor and stall details
     const response = await Booking.aggregate([
       {
-        $match: { exhibitorId: new mongoose.Types.ObjectId(id) }, // Ensure new is used here
+        $match: { exhibitorId: new mongoose.Types.ObjectId(id) }, // Match exhibitorId
       },
       {
         $project: {
@@ -554,14 +554,14 @@ exports.getVisitorsList = async (req, res) => {
           status: 1,
           slotTime: 1,
           timeZone: 1,
-          meetingLink: 1,
           duration: 1,
-          createdAt: 1 // Include createdAt in projection for sorting
+          createdAt: 1, // Include createdAt for sorting
+          stallId: 1,
         },
       },
       {
         $lookup: {
-          from: "visitors", // Assuming there is a 'visitors' collection
+          from: "visitors", // 'visitors' collection
           localField: "visitorId",
           foreignField: "_id",
           as: "visitorDetails",
@@ -571,20 +571,37 @@ exports.getVisitorsList = async (req, res) => {
         $unwind: { path: "$visitorDetails", preserveNullAndEmptyArrays: true },
       },
       {
+        $lookup: {
+          from: "stalls", // 'stalls' collection
+          localField: "stallId",
+          foreignField: "_id",
+          as: "stallDetails",
+        },
+      },
+      {
+        $unwind: { path: "$stallDetails", preserveNullAndEmptyArrays: true },
+      },
+      {
         $project: {
-          visitorName: "$visitorDetails.name",
+          visitorName: {
+            $concat: ["$visitorDetails.firstName", " ", "$visitorDetails.lastName"]
+          },
+          visitorCompany: "$visitorDetails.companyName",
+          visitorEmail: "$visitorDetails.email",
           visitorId: 1,
           timeZone: 1,
           status: 1,
           slotTime: 1,
-          meetingLink: 1,
           duration: 1,
-          createdAt: 1 // Keep createdAt for sorting
+          createdAt: 1, // Keep for sorting
+          stallName: "$stallDetails.stallName",
+          defaultMeeting: { $ifNull: ["$stallDetails.meeting_details.meetingDefaultType", true] },
+          meetingLink: { $ifNull: ["$stallDetails.meeting_details.meetingUrl", ""] },
         },
       },
       {
-        $sort: { createdAt: -1 } // Sort by createdAt in descending order; use 1 for ascending
-      }
+        $sort: { createdAt: -1 }, // Sort by createdAt in descending order
+      },
     ]);
 
     if (response && response.length > 0) {
@@ -602,13 +619,15 @@ exports.getVisitorsList = async (req, res) => {
 
         // Calculate endDate by adding duration to slotTime
         const endDate = moment(item?.slotTime)
-          .add(item?.duration || 0, 'minutes')
+          .add(item?.duration || 0, "minutes")
           .toISOString();
 
         return {
           SerialNo,
           _id: item?._id,
           name: item?.visitorName || "N/A",
+          visitorCompany: item?.visitorCompany,
+          visitorEmail: item?.visitorEmail,
           visitorId: item?.visitorId,
           timeZone: item?.timeZone,
           status: item?.status || "N/A",
@@ -617,11 +636,11 @@ exports.getVisitorsList = async (req, res) => {
           startDate: item?.slotTime,
           endDate: endDate,
           dateTime: item?.slotTime,
-          meetingId: item?._id, // Ensure this corresponds to your model's structure
-          meetingLink: item?.meetingLink || "",
+          meetingId: item?._id,
+          meetingLink: item?.meetingLink || "N/A",
+          defaultMeeting: item?.defaultMeeting ?? true,
         };
       });
-
       return res.status(200).json({ success: true, data: formattedResponse });
     } else {
       return res.status(200).json({ success: true, data: [] });

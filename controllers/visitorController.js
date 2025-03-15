@@ -490,7 +490,7 @@ exports.getAllLoggedInVisitor = async (req, res) => {
 // Get list of all logged-in visitors
 exports.getAllLoggedInVisitorList = async (req, res) => {
     try {
-        const visitors = await Visitor.find({ loggedIn: true });
+        const visitors = await Visitor.find({ loggedIn: true }).sort({ createdAt: -1 });
         if (visitors.length === 0) {
             const successObj = notFoundResponse('No Visitor List');
             res.status(successObj.status).send(successObj);
@@ -514,7 +514,7 @@ exports.getAllLoggedInVisitorList = async (req, res) => {
 // Get list of all active (joined) visitors
 exports.getAllJoinedVisitorList = async (req, res) => {
     try {
-        const visitors = await Visitor.find({ active: true });
+        const visitors = await Visitor.find({ active: true }).sort({ createdAt: -1 });
         if (visitors.length === 0) {
             const successObj = notFoundResponse('No Visitor List');
             res.status(successObj.status).send(successObj);

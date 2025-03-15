@@ -191,7 +191,8 @@ emailController.sendForgotPasswordSuccess = async function (data) {
   return info.messageId;
 };
 
-emailController.sendBookingConfirmationMail = async function (visitorId, exhibitorId, slotDetails, status) {
+emailController.sendBookingConfirmationMail = async function (req, res) {
+  const { visitorId, exhibitorId, slotDetails, status } = req.body
   try {
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);
@@ -261,7 +262,8 @@ emailController.sendBookingConfirmationMail = async function (visitorId, exhibit
   }
 };
 
-emailController.sendBookingRequestMail = async function (visitorId, exhibitorId, slotDetails) {
+emailController.sendBookingRequestMail = async function (req, res) {
+  const { visitorId, exhibitorId, slotDetails } = req.body
   try {
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);

@@ -5,7 +5,7 @@ const VisitedStall = require('../models/VisitedStall');
 
 exports.visitorReport = async (req, res) => {
     try {
-        const visitor = await Visitor.find({})
+        const visitor = await Visitor.find({}).sort({ createdAt: -1 });
 
         if (!visitor) {
             return res.status(404).json({ message: 'Visitor entry not found' });
@@ -20,7 +20,7 @@ exports.visitorReport = async (req, res) => {
 
 exports.exhibitorReport = async (req, res) => {
     try {
-        const exhibitors = await Exhibitor.find({});
+        const exhibitors = await Exhibitor.find({}).sort({ createdAt: -1 });
 
         const successObj = successResponse('Exhibitor List', exhibitors);
         res.status(successObj.status).send(successObj);
@@ -34,19 +34,20 @@ exports.getAllVisitedStall = async (req, res) => {
         const visitedStalls = await VisitedStall.find()
             .populate({
                 path: 'exhibitor',
-                select: 'name companyName email phone', // Select only the fields you need
+                select: 'name companyName email phone',
                 options: { strictPopulate: false }
             })
             .populate({
                 path: 'visitor',
-                select: 'name companyName email phone', // Select only the fields you need
+                select: 'name companyName email phone',
                 options: { strictPopulate: false }
             })
             .populate({
                 path: 'stall',
-                select: 'stallName', // Select only the fields you need
+                select: 'stallName',
                 options: { strictPopulate: false }
             })
+            .sort({ createdAt: -1 }) // Sort by createdAt in descending order
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this visitor', []);
