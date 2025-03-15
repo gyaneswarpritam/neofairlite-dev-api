@@ -30,7 +30,7 @@ exports.getVisitorNotification = async (req, res) => {
                 path: 'exhibitor',
                 select: 'name companyName email phone' // Select only the fields you need
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await VisitorNotification.countDocuments();
         const successObj = successResponseWithRecordCount('Visitor Notification List', visitorNotify, totalCount);
@@ -47,7 +47,7 @@ exports.getVisitorAllNotification = async (req, res) => {
                 path: 'exhibitor',
                 select: 'name companyName email phone' // Select only the fields you need
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await VisitorNotification.countDocuments();
         const successObj = successResponseWithRecordCount('Visitor Notification List', visitorNotify, totalCount);
@@ -64,7 +64,7 @@ exports.getExhibitorNotification = async (req, res) => {
                 path: 'visitor',
                 select: 'name companyName email phone'
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await ExhibitorNotification.countDocuments();
         const successObj = successResponseWithRecordCount('Exhibitor Notification List', exhibitorNotify, totalCount);
@@ -80,7 +80,7 @@ exports.getExhibitorAllNotification = async (req, res) => {
                 path: 'visitor',
                 select: 'name companyName email phone'
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await ExhibitorNotification.countDocuments();
         const successObj = successResponseWithRecordCount('Exhibitor Notification List', exhibitorNotify, totalCount);

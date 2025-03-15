@@ -330,7 +330,7 @@ exports.listBookedSlots = async (req, res) => {
     }
 
     // Find all bookings for the visitor that match the filter
-    const bookedSlots = await Booking.find(filter).populate('exhibitorId', 'companyName').sort({ createdAt: -1 }); // Assuming exhibitorId references an exhibitor model with companyName field
+    const bookedSlots = await Booking.find(filter).populate('exhibitorId', 'companyName').sort({ updatedAt: -1 }); // Assuming exhibitorId references an exhibitor model with companyName field
 
     // If no slots are found, return an empty list
     if (!bookedSlots.length) {
@@ -451,7 +451,7 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
     }
 
     // Find all bookings for the exhibitor that match the filter, populate visitor details
-    const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email').sort({ createdAt: -1 }) // Assuming visitorId references a visitor model with name and email fields
+    const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email').sort({ updatedAt: -1 }) // Assuming visitorId references a visitor model with name and email fields
 
     // If no slots are found, return an empty list
     if (!bookedSlots.length) {
@@ -600,7 +600,7 @@ exports.getVisitorsList = async (req, res) => {
         },
       },
       {
-        $sort: { createdAt: -1 }, // Sort by createdAt in descending order
+        $sort: { updatedAt: -1 }, // Sort by createdAt in descending order
       },
     ]);
 

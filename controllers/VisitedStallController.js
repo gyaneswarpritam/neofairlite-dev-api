@@ -39,7 +39,7 @@ exports.getAllVisitedStallForVisitor = async (req, res) => {
                 path: 'stall',
                 select: 'stallName' // Select only the fields you need
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this visitor', []);
@@ -114,7 +114,7 @@ exports.getLiveVisitedStallForExhibitor = async (req, res) => {
                 path: 'stall',
                 select: 'stallName'
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
 
         if (!visitedStalls || visitedStalls.length === 0) {

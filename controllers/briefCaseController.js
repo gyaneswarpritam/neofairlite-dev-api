@@ -145,7 +145,7 @@ exports.getAllBriefcaseAdmin = async (req, res) => {
                 path: 'product',
                 select: 'title url locked like review active deleted' // Adjust fields as needed
             })
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         if (!Briefcases || Briefcases.length === 0) {
             const notFoundObj = notFoundResponse('No Briefcase data for this visitor');

@@ -286,7 +286,7 @@ exports.getChatExhibitor = async (req, res) => {
 
 exports.getAllLoggedInExhibitorList = async (req, res) => {
     try {
-        const exhibitor = await Exhibitor.find({ loggedIn: true }).sort({ createdAt: -1 });
+        const exhibitor = await Exhibitor.find({ loggedIn: true }).sort({ updatedAt: -1 });
         if (exhibitor.length == 0) {
             const successObj = notFoundResponse('No exhibitor List');
             res.status(successObj.status).send(successObj);
@@ -309,7 +309,7 @@ exports.getAllLoggedInExhibitorList = async (req, res) => {
 };
 exports.getAllJoinedExhibitorList = async (req, res) => {
     try {
-        const exhibitor = await Exhibitor.find({ active: true }).sort({ createdAt: -1 });
+        const exhibitor = await Exhibitor.find({ active: true }).sort({ updatedAt: -1 });
         if (exhibitor.length == 0) {
             const successObj = notFoundResponse('No exhibitor List');
             res.status(successObj.status).send(successObj);

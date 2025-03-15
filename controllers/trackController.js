@@ -35,7 +35,7 @@ exports.getTrackVisitor = async (req, res) => {
             })
             // .skip(Number(offset)) // Skip the specified number of documents
             // .limit(Number(limit)) // Limit the number of documents returned
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await TrackVisitor.countDocuments();
         // const totalPages = Math.ceil(totalCount / limit);
@@ -62,7 +62,7 @@ exports.getTrackMeeting = async (req, res) => {
             })
             // .skip(Number(offset)) // Skip the specified number of documents
             // .limit(Number(limit)) // Limit the number of documents returned
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await TrackMeeting.countDocuments();
         // const totalPages = Math.ceil(totalCount / limit);
@@ -100,7 +100,7 @@ exports.getTrackMeeting = async (req, res) => {
             })
             // .skip(Number(offset)) // Skip the specified number of documents
             // .limit(Number(limit)) // Limit the number of documents returned
-            .sort({ createdAt: -1 })
+            .sort({ updatedAt: -1 })
             .exec();
         const totalCount = await TrackMeeting.countDocuments();
         // const totalPages = Math.ceil(totalCount / limit);
