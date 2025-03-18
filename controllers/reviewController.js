@@ -160,44 +160,42 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
     try {
         let query = {};
 
-        // If productListId is provided, filter by it
         if (productListId) {
             query.productList = productListId;
         }
         if (stallId) {
             query.stall = stallId;
         }
-        // Find Review entries and populate visitor details
+
         const reviewEntries = await Review.find(query)
             .populate('visitor', 'name email phone companyName')
             .populate('productList', 'title');
 
-        // If no review entries are found, return a 404 error
         if (!reviewEntries || reviewEntries.length === 0) {
             return res.status(404).json({ message: 'No data found' });
         }
 
-        // Extract visitor details
         const visitors = reviewEntries.map(entry => {
-            const { _id, name, email, phone, companyName } = entry.visitor;
+            const visitorData = entry.visitor || {};
             return {
-                _id,
-                title: entry.productList.title,
-                visitorName: `${name || ''}`.trim(),
-                visitorEmail: email,
-                visitorPhone: phone,
-                companyName,
+                _id: entry._id,  // Ensure each review entry has a unique ID
+                title: entry.productList?.title || "Unknown",
+                visitorName: visitorData.name || "",
+                visitorEmail: visitorData.email || "",
+                visitorPhone: visitorData.phone || "",
+                companyName: visitorData.companyName || "",
                 createdAt: entry.createdAt,
                 updatedAt: entry.updatedAt
             };
         });
 
-        const successObj = successResponse('most reviewed details', visitors);
+        const successObj = successResponse('Most reviewed details', visitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching most reviewed details', error });
     }
 };
+
 
 exports.getVisitorsByMostLiked = async (req, res) => {
     const { productListId } = req.params;
