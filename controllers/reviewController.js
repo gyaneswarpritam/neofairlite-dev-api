@@ -202,37 +202,34 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
 exports.getVisitorsByMostLiked = async (req, res) => {
     const { productListId } = req.params;
     const { stallId } = req.body;
+
     try {
         let query = {};
 
-        // If productListId is provided, filter by it
         if (productListId) {
             query.productList = productListId;
         }
         if (stallId) {
             query.stall = stallId;
         }
-        // Find Like entries and populate visitor details
+
         const likeEntries = await Like.find(query)
             .populate('visitor', 'name email phone companyName')
             .populate('productList', 'title');
 
-        // If no like entries are found, return a 404 error
         if (!likeEntries || likeEntries.length === 0) {
             return res.status(404).json({ message: 'No most liked found' });
         }
 
-        // Extract visitor details
         const visitors = likeEntries.map(entry => {
-            const { _id, name, email, phone, companyName } = entry.visitor;
+            const visitorData = entry.visitor || {};
             return {
-                _id,
-                title: entry.productList.title,
-                visitorName: `${name || ''}`.trim(),
-                visitorEmail: email,
-                visitorPhone: phone,
-                visitorPhone: phone,
-                companyName,
+                _id: entry._id,  // Ensure each entry is unique
+                title: entry.productList?.title || "Unknown",
+                visitorName: visitorData.name || "",
+                visitorEmail: visitorData.email || "",
+                visitorPhone: visitorData.phone || "",
+                companyName: visitorData.companyName || "",
                 createdAt: entry.createdAt,
                 updatedAt: entry.updatedAt
             };
@@ -241,8 +238,9 @@ exports.getVisitorsByMostLiked = async (req, res) => {
         const successObj = successResponse('Most liked details', visitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching Most liked details', error });
+        res.status(500).json({ message: 'Error fetching most liked details', error });
     }
 };
+
 
 
