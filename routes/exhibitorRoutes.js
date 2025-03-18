@@ -75,11 +75,11 @@ router.put('/notification/:exhibitorId', passport.authenticate('jwt-exhibitor', 
 router.get('/likes/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), likeController.getProductsAndLikeCounts);
 router.get('/reviews/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getAverageReviewsByExhibitorId);
 router.get('/visited-product-count/:exhibitorId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitedProductExhibitorId);
-router.get('/visitor-by-product', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostViewed);
+router.post('/visitor-by-product', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostViewed);
 router.get('/visitor-by-product/:productListId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostViewed);
-router.get('/visitor-by-reviewed', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostReviewed);
+router.post('/visitor-by-reviewed', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostReviewed);
 router.get('/visitor-by-reviewed/:productListId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostReviewed);
-router.get('/visitor-by-liked', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostLiked);
+router.post('/visitor-by-liked', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostLiked);
 router.get('/visitor-by-liked/:productListId', passport.authenticate('jwt-exhibitor', { session: false }), reviewController.getVisitorsByMostLiked);
 
 router.put('/productList/:id', passport.authenticate('jwt-exhibitor', { session: false }), productsListController.updateProduct);
@@ -98,5 +98,6 @@ router.post('/notify-meeting', passport.authenticate('jwt-exhibitor', { session:
 
 router.get('/auditorium', passport.authenticate('jwt-exhibitor', { session: false }), auditoriumController.getAllAuditorium);
 router.get('/profile/:id', passport.authenticate('jwt-exhibitor', { session: false }), exhibitorController.getExhibitorById);
+router.get('/stall-id-by-exhibitor/:id', passport.authenticate('jwt-exhibitor', { session: false }), stallController.getStallIdByExhibitorId);
 
 module.exports = router;

@@ -102,6 +102,7 @@ exports.getAllVisitedStallForExhibitor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 exports.getLiveVisitedStallForExhibitor = async (req, res) => {
     try {
         const visitedStalls = await VisitedStall.find({ exhibitor: req.params.exhibitorId })
@@ -119,17 +120,19 @@ exports.getLiveVisitedStallForExhibitor = async (req, res) => {
 
         if (!visitedStalls || visitedStalls.length === 0) {
             const successObj = successResponse('No visited stalls found for this exhibitor', []);
-            res.status(successObj.status).send(successObj);
+            return res.status(successObj.status).send(successObj);
         }
 
-        // Map the visited stalls to extract required information
-        const stallList = visitedStalls.map(stall => ({
-            visitor: stall.visitor.name,
-            companyName: stall.visitor.companyName,
-            visitorEmail: stall.visitor.email,
-            visitorPhone: stall.visitor.phone,
-            updatedAt: stall.updatedAt
-        }));
+        // Filter out records where visitor is null
+        const stallList = visitedStalls
+            .filter(stall => stall.visitor) // Ensure visitor is not null
+            .map(stall => ({
+                visitor: stall.visitor.name,
+                companyName: stall.visitor.companyName,
+                visitorEmail: stall.visitor.email,
+                visitorPhone: stall.visitor.phone,
+                updatedAt: stall.updatedAt
+            }));
 
         const successObj = successResponse('Visited Stall List', stallList);
         res.status(successObj.status).send(successObj);
@@ -137,6 +140,43 @@ exports.getLiveVisitedStallForExhibitor = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+// exports.getLiveVisitedStallForExhibitor = async (req, res) => {
+//     try {
+//         const visitedStalls = await VisitedStall.find({ exhibitor: req.params.exhibitorId })
+//             .populate({
+//                 path: 'visitor',
+//                 select: 'name companyName email phone loggedIn',
+//                 match: { loggedIn: true } // Filter to retrieve only visitors who are logged in
+//             })
+//             .populate({
+//                 path: 'stall',
+//                 select: 'stallName'
+//             })
+//             .sort({ updatedAt: -1 })
+//             .exec();
+
+//         if (!visitedStalls || visitedStalls.length === 0) {
+//             const successObj = successResponse('No visited stalls found for this exhibitor', []);
+//             res.status(successObj.status).send(successObj);
+//         }
+
+//         // Map the visited stalls to extract required information
+//         const stallList = visitedStalls.map(stall => ({
+//             visitor: stall.visitor.name,
+//             companyName: stall.visitor.companyName,
+//             visitorEmail: stall.visitor.email,
+//             visitorPhone: stall.visitor.phone,
+//             updatedAt: stall.updatedAt
+//         }));
+
+//         const successObj = successResponse('Visited Stall List', stallList);
+//         res.status(successObj.status).send(successObj);
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// };
 exports.getStallById = async (req, res) => {
     try {
         const stall = await Stall.findById(req.params.id)

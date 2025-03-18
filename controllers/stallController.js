@@ -216,6 +216,25 @@ exports.getStallByExhibitor = async (req, res) => {
     }
 };
 
+exports.getStallIdByExhibitorId = async (req, res) => {
+    try {
+        const stall = await Stall.findOne({ exhibitor: req.params.id });
+
+        if (!stall) {
+            const notFoundObj = notFoundResponse('Stall entry not found for this exhibitor');
+            return res.status(notFoundObj.status).send(notFoundObj);
+        }
+
+
+        const successObj = successResponse('Stall Id by exhibitor', {
+            stallId: stall._id
+        });
+        res.status(successObj.status).send(successObj);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 exports.updateStall = async (req, res) => {
     try {

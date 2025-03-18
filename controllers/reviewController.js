@@ -112,6 +112,7 @@ exports.getVisitedProductExhibitorId = async (req, res) => {
 
 exports.getVisitorsByMostViewed = async (req, res) => {
     const { productListId } = req.params;
+    const { stallId } = req.body;
 
     try {
         let query = {};
@@ -119,6 +120,9 @@ exports.getVisitorsByMostViewed = async (req, res) => {
         // If productListId is provided, filter by it
         if (productListId) {
             query.productList = productListId;
+        }
+        if (stallId) {
+            query.stall = stallId;
         }
 
         // Find ProductVisited entries and populate visitor details
@@ -128,7 +132,7 @@ exports.getVisitorsByMostViewed = async (req, res) => {
 
         // If no ProductVisited entries are found, return a 404 error
         if (!productVisitedEntries || productVisitedEntries.length === 0) {
-            return res.status(404).json({ message: 'No visitors found' });
+            return res.status(404).json({ message: 'No data found' });
         }
 
         // Extract visitor details
@@ -146,16 +150,17 @@ exports.getVisitorsByMostViewed = async (req, res) => {
             };
         });
 
-        const successObj = successResponse('Visitor details', visitors);
+        const successObj = successResponse('most viewed details', visitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching visitor details', error });
+        res.status(500).json({ message: 'Error fetching most viewed details', error });
     }
 };
 
 
 exports.getVisitorsByMostReviewed = async (req, res) => {
     const { productListId } = req.params;
+    const { stallId } = req.body;
 
     try {
         let query = {};
@@ -164,7 +169,9 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
         if (productListId) {
             query.productList = productListId;
         }
-
+        if (stallId) {
+            query.stall = stallId;
+        }
         // Find Review entries and populate visitor details
         const reviewEntries = await Review.find(query)
             .populate('visitor', 'name email phone companyName')
@@ -172,7 +179,7 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
 
         // If no review entries are found, return a 404 error
         if (!reviewEntries || reviewEntries.length === 0) {
-            return res.status(404).json({ message: 'No visitors found' });
+            return res.status(404).json({ message: 'No data found' });
         }
 
         // Extract visitor details
@@ -190,16 +197,16 @@ exports.getVisitorsByMostReviewed = async (req, res) => {
             };
         });
 
-        const successObj = successResponse('Visitor details', visitors);
+        const successObj = successResponse('most reviewed details', visitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching visitor details', error });
+        res.status(500).json({ message: 'Error fetching most reviewed details', error });
     }
 };
 
 exports.getVisitorsByMostLiked = async (req, res) => {
     const { productListId } = req.params;
-
+    const { stallId } = req.body;
     try {
         let query = {};
 
@@ -207,7 +214,9 @@ exports.getVisitorsByMostLiked = async (req, res) => {
         if (productListId) {
             query.productList = productListId;
         }
-
+        if (stallId) {
+            query.stall = stallId;
+        }
         // Find Like entries and populate visitor details
         const likeEntries = await Like.find(query)
             .populate('visitor', 'name email phone companyName')
@@ -215,7 +224,7 @@ exports.getVisitorsByMostLiked = async (req, res) => {
 
         // If no like entries are found, return a 404 error
         if (!likeEntries || likeEntries.length === 0) {
-            return res.status(404).json({ message: 'No visitors found' });
+            return res.status(404).json({ message: 'No most liked found' });
         }
 
         // Extract visitor details
@@ -234,10 +243,10 @@ exports.getVisitorsByMostLiked = async (req, res) => {
             };
         });
 
-        const successObj = successResponse('Visitor details', visitors);
+        const successObj = successResponse('Most liked details', visitors);
         res.status(successObj.status).send(successObj);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching visitor details', error });
+        res.status(500).json({ message: 'Error fetching Most liked details', error });
     }
 };
 

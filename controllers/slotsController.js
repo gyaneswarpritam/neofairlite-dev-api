@@ -121,9 +121,6 @@ exports.listSlots = async (req, res) => {
       }
     });
 
-    // Log existing bookings for debugging
-    console.log(`Existing Meetings: ${JSON.stringify(existingBookings)}`);
-
     // Mark booked slots based on existing bookings
     slots = slots.map(slot => {
       const existingBooking = existingBookings.find(booking => moment(booking.slotTime).isSame(slot.time));
@@ -250,7 +247,7 @@ exports.bookSlot = async (req, res) => {
   }
 };
 
-exports.sendBookingRequestMail = async (req, res) => {
+exports.sendBookingRequest = async (req, res) => {
   try {
     const { visitorId, exhibitorId, slotData } = req.body;
     const { startDate, endDate, timeZone } = slotData;
@@ -260,25 +257,7 @@ exports.sendBookingRequestMail = async (req, res) => {
     slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
     slotData.time = `${startTime} - ${endTime}`;
 
-    emailController.sendBookingRequestMail(visitorId, exhibitorId, slotData)
-    return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-};
-exports.sendBookingRequestMail = async (req, res) => {
-  try {
-    const { visitorId, exhibitorId, slotData } = req.body;
-    const { startDate, endDate, timeZone } = slotData;
-    const startTime = moment(startDate).tz(timeZone).format("hh:mm A");
-    const endTime = moment(endDate).tz(timeZone).format("hh:mm A");
-
-    slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
-    slotData.time = `${startTime} - ${endTime}`;
-
-    emailController.sendBookingRequestMail(visitorId, exhibitorId, slotData)
+    emailController.sendBookingRequestMail({ visitorId, exhibitorId, slotData })
     return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
 
   } catch (err) {
@@ -297,7 +276,7 @@ exports.sendBookingApproveRejectMail = async (req, res) => {
     slotData.date = moment(startDate).tz(timeZone).format("YYYY-MM-DD");
     slotData.time = `${startTime} - ${endTime}`;
 
-    emailController.sendBookingConfirmationMail(visitorId, exhibitorId, slotData, status)
+    emailController.sendBookingConfirmationMail({ visitorId, exhibitorId, slotData, status });
     return res.status(200).json({ success: true, message: 'Slot booking sent successfully.' });
 
   } catch (err) {
@@ -428,18 +407,87 @@ exports.listBookedSlots = async (req, res) => {
 //   }
 // };
 
+// exports.listBookedSlotsExhibitor = async (req, res) => {
+//   try {
+//     // Extract exhibitorId and optional date from the query parameters
+//     const { exhibitorId, date } = req.query;
+
+//     // Validate that exhibitorId is provided
+//     if (!exhibitorId) {
+//       return res.status(400).json({ success: false, message: 'exhibitorId is required' });
+//     }
+
+//     // Initialize a filter object
+//     const filter = { exhibitorId };
+
+//     // If date is provided, filter bookings for that date (assuming date format is YYYY-MM-DD)
+//     if (date) {
+//       const startOfDay = moment(date).startOf('day').toDate();
+//       const endOfDay = moment(date).endOf('day').toDate();
+
+//       // Add date range filter for slotTime
+//       filter.slotTime = { $gte: startOfDay, $lte: endOfDay };
+//     }
+
+//     // Find all bookings for the exhibitor that match the filter, populate visitor details
+//     const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email').sort({ updatedAt: -1 }) // Assuming visitorId references a visitor model with name and email fields
+
+//     // If no slots are found, return an empty list
+//     if (!bookedSlots.length) {
+//       return res.json({ success: true, data: [], message: 'No booked slots found for this exhibitor.' });
+//     }
+
+//     // Map bookedSlots to the desired response structure
+//     const responseData = bookedSlots.map((slot, index) => {
+//       const timezone = slot.timeZone; // Use the stored timezone, or set a default if needed
+
+//       // Convert and format slot start time based on the stored timezone
+//       const formattedDate = moment(slot.slotTime).tz(timezone).format('YYYY-MM-DD');
+//       const formattedStartTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
+
+//       // Calculate the end time by adding the duration to the slotTime
+//       const durationMinutes = parseInt(slot.duration) || 0; // Parse duration as integer, default to 0 if not available
+//       const formattedEndTime = moment(slot.slotTime).add(durationMinutes, 'minutes').tz(timezone).format('HH:mm A');
+//       const formattedTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
+//       // Format the full time range
+//       const timeRange = `${formattedStartTime} - ${formattedEndTime}`;
+
+//       return {
+//         SerialNo: index + 1,
+//         Date: formattedDate,
+//         Time: formattedTime,
+//         TimeRange: timeRange, // Show time as start time - end time
+//         Timezone: timezone,
+//         VisitorId: slot.visitorId._id,
+//         VisitorName: slot.visitorId.name || 'N/A', // Default to 'N/A' if visitor name is unavailable
+//         VisitorEmail: slot.visitorId.email || 'N/A', // Default to 'N/A' if visitor email is unavailable
+//         Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable
+//         MeetingLink: slot.meetingLink || '', // Default to empty if meeting link is not available
+//         Duration: slot.duration || 'N/A' // Default to 'N/A' if duration is not available
+//       };
+//     });
+
+//     // Respond with the formatted data
+//     res.json({ success: true, data: responseData });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ success: false, message: 'Internal server error' });
+//   }
+// };
+
 exports.listBookedSlotsExhibitor = async (req, res) => {
   try {
     // Extract exhibitorId and optional date from the query parameters
-    const { exhibitorId, date } = req.query;
+    let { exhibitorId, date } = req.query;
 
-    // Validate that exhibitorId is provided
-    if (!exhibitorId) {
-      return res.status(400).json({ success: false, message: 'exhibitorId is required' });
+    // Validate that exhibitorId is provided and is a valid ObjectId
+    if (!exhibitorId || !mongoose.Types.ObjectId.isValid(exhibitorId)) {
+      return res.status(400).json({ success: false, message: 'Invalid exhibitorId' });
     }
 
-    // Initialize a filter object
-    const filter = { exhibitorId };
+    // Initialize a filter object with a properly cast ObjectId
+    const filter = { exhibitorId: new mongoose.Types.ObjectId(exhibitorId) };
 
     // If date is provided, filter bookings for that date (assuming date format is YYYY-MM-DD)
     if (date) {
@@ -451,7 +499,9 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
     }
 
     // Find all bookings for the exhibitor that match the filter, populate visitor details
-    const bookedSlots = await Booking.find(filter).populate('visitorId', 'name email').sort({ updatedAt: -1 }) // Assuming visitorId references a visitor model with name and email fields
+    const bookedSlots = await Booking.find(filter)
+      .populate('visitorId', 'name email')
+      .sort({ updatedAt: -1 });
 
     // If no slots are found, return an empty list
     if (!bookedSlots.length) {
@@ -460,31 +510,25 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
 
     // Map bookedSlots to the desired response structure
     const responseData = bookedSlots.map((slot, index) => {
-      const timezone = slot.timeZone; // Use the stored timezone, or set a default if needed
-
-      // Convert and format slot start time based on the stored timezone
+      const timezone = slot.timeZone || 'UTC'; // Default timezone if not set
       const formattedDate = moment(slot.slotTime).tz(timezone).format('YYYY-MM-DD');
       const formattedStartTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
-
-      // Calculate the end time by adding the duration to the slotTime
-      const durationMinutes = parseInt(slot.duration) || 0; // Parse duration as integer, default to 0 if not available
+      const durationMinutes = parseInt(slot.duration) || 0;
       const formattedEndTime = moment(slot.slotTime).add(durationMinutes, 'minutes').tz(timezone).format('HH:mm A');
-      const formattedTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
-      // Format the full time range
       const timeRange = `${formattedStartTime} - ${formattedEndTime}`;
 
       return {
         SerialNo: index + 1,
         Date: formattedDate,
-        Time: formattedTime,
-        TimeRange: timeRange, // Show time as start time - end time
+        Time: formattedStartTime,
+        TimeRange: timeRange,
         Timezone: timezone,
-        VisitorId: slot.visitorId._id,
-        VisitorName: slot.visitorId.name || 'N/A', // Default to 'N/A' if visitor name is unavailable
-        VisitorEmail: slot.visitorId.email || 'N/A', // Default to 'N/A' if visitor email is unavailable
-        Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable
-        MeetingLink: slot.meetingLink || '', // Default to empty if meeting link is not available
-        Duration: slot.duration || 'N/A' // Default to 'N/A' if duration is not available
+        VisitorId: slot.visitorId?._id || 'N/A',
+        VisitorName: slot.visitorId?.name || 'N/A',
+        VisitorEmail: slot.visitorId?.email || 'N/A',
+        Status: slot.status || 'N/A',
+        MeetingLink: slot.meetingLink || '',
+        Duration: slot.duration || 'N/A'
       };
     });
 
@@ -496,7 +540,6 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-
 
 exports.getExhibitionDate = (req, res) => {
   const { timeZone } = req.query;

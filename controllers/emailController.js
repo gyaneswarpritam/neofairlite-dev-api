@@ -191,9 +191,9 @@ emailController.sendForgotPasswordSuccess = async function (data) {
   return info.messageId;
 };
 
-emailController.sendBookingConfirmationMail = async function (req, res) {
-  const { visitorId, exhibitorId, slotDetails, status } = req.body
+emailController.sendBookingConfirmationMail = async function (data) {
   try {
+    const { visitorId, exhibitorId, slotData, status } = data;
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);
     const exhibitor = await Exhibitor.findById(exhibitorId);
@@ -220,7 +220,7 @@ emailController.sendBookingConfirmationMail = async function (req, res) {
       visitorName: visitor.name,
       visitorEmail: visitor.email,
       visitorCompany: visitor.companyName,
-      slotDate: slotDetails.date,
+      slotDate: slotData.date,
       exhibitorName: exhibitor.name,
       exhibitorEmail: exhibitor.email,
       exhibitorCompany: exhibitor.companyName,
@@ -228,7 +228,7 @@ emailController.sendBookingConfirmationMail = async function (req, res) {
     const htmlToSendExhibitor = templateExhibitor({
       visitorName: visitor.name,
       visitorCompany: visitor.companyName,
-      slotDate: slotDetails.date,
+      slotDate: slotData.date,
       exhibitorName: exhibitor.name,
       exhibitorEmail: exhibitor.email,
       exhibitorCompany: exhibitor.companyName,
@@ -254,17 +254,17 @@ emailController.sendBookingConfirmationMail = async function (req, res) {
       subject: status == "approve" ? "DEV - Meeting Confirmation" : "DEV - Meeting Declined",
       html: htmlToSendExhibitor,
     });
-    visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotDetails.date} .`);
-    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has booked a slot with you on ${slotDetails.date} .`);
+    visitor.phone && sendPhoneMessage(visitor.phone, `Your slot has been successfully booked with ${exhibitor.name} on ${slotData.date} .`);
+    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has booked a slot with you on ${slotData.date} .`);
   } catch (error) {
     console.error("Error sending booking confirmation email:", error);
     throw error;
   }
 };
 
-emailController.sendBookingRequestMail = async function (req, res) {
-  const { visitorId, exhibitorId, slotDetails } = req.body
+emailController.sendBookingRequestMail = async function (data) {
   try {
+    const { visitorId, exhibitorId, slotData } = data;
     // Fetch the visitor and exhibitor details
     const visitor = await Visitor.findById(visitorId);
     const exhibitor = await Exhibitor.findById(exhibitorId);
@@ -279,11 +279,11 @@ emailController.sendBookingRequestMail = async function (req, res) {
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
-      visitorName: visitor.name,
-      exhibitorName: exhibitor.name,
-      exhibitorCompany: exhibitor.companyName,
-      slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
+      visitorName: visitor?.name,
+      exhibitorName: exhibitor?.name,
+      exhibitorCompany: exhibitor?.companyName,
+      slotDate: slotData?.date,
+      exhibitorEmail: exhibitor?.email
     });
 
     if (visitor.email) {
@@ -292,7 +292,7 @@ emailController.sendBookingRequestMail = async function (req, res) {
         from: "enquiry@neofairs.com",
         cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: "DEV - Meeting Request Submitted",
+        subject: "DEV - Meeting Reminder",
         html: htmlToSend,
       });
     }
@@ -303,23 +303,23 @@ emailController.sendBookingRequestMail = async function (req, res) {
     const templateExhibitor = handlebars.compile(templateSourceExhibitor);
 
     const htmlToSendExhibitor = templateExhibitor({
-      visitorName: visitor.name,
-      visitorEmail: visitor.email,
-      visitorCompany: visitor.companyName,
-      exhibitorName: exhibitor.name,
-      slotDate: slotDetails.date,
-      exhibitorEmail: exhibitor.email
+      visitorName: visitor?.name,
+      visitorEmail: visitor?.email,
+      visitorCompany: visitor?.companyName,
+      exhibitorName: exhibitor?.name,
+      slotDate: slotData?.date,
+      exhibitorEmail: exhibitor?.email
     });
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
       from: "enquiry@neofairs.com",
       cc: "enquiry@neofairs.com",
-      to: exhibitor.email,
+      to: exhibitor?.email,
       subject: "DEV - New Meeting Request",
       html: htmlToSendExhibitor,
     });
-    visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor?.name} on ${slotDetails.date} has been submitted successfully.`);
-    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has requested a booking with you on ${slotDetails.date}.`);
+    visitor.phone && sendPhoneMessage(visitor.phone, `Your request to book a slot with ${exhibitor?.name} on ${slotData.date} has been submitted successfully.`);
+    exhibitor && exhibitor?.phone && sendPhoneMessage(exhibitor?.phone, `${visitor?.name} has requested a booking with you on ${slotData.date}.`);
   } catch (error) {
     console.error("Error sending Meeting request email:", error);
     throw error;
@@ -355,7 +355,7 @@ emailController.sendBookingNotifyVisitorMail = async (req, res) => {
         from: "enquiry@neofairs.com",
         cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: "DEV - Meeting Request Submitted",
+        subject: "DEV - Meeting Reminder",
         html: htmlToSend,
       });
     }
