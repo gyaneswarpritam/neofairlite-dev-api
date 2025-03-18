@@ -117,7 +117,6 @@ exports.getVisitorsByMostViewed = async (req, res) => {
     try {
         let query = {};
 
-        // If productListId is provided, filter by it
         if (productListId) {
             query.productList = productListId;
         }
@@ -125,30 +124,25 @@ exports.getVisitorsByMostViewed = async (req, res) => {
             query.stall = stallId;
         }
 
-        // Find ProductVisited entries and populate visitor details
         const productVisitedEntries = await ProductVisited.find(query)
             .populate('visitor', 'name email phone companyName')
             .populate('productList', 'title');
 
-        // If no ProductVisited entries are found, return a 404 error
         if (!productVisitedEntries || productVisitedEntries.length === 0) {
             return res.status(404).json({ message: 'No data found' });
         }
 
-        // Extract visitor details
-        const visitors = productVisitedEntries.map(entry => {
-            const { _id, name, email, phone, companyName } = entry.visitor;
-            return {
-                _id,
-                title: entry.productList.title,
-                visitorName: `${name || ''}`.trim(),
-                visitorEmail: email,
-                visitorPhone: phone,
-                companyName,
-                createdAt: entry.createdAt,
-                updatedAt: entry.updatedAt
-            };
-        });
+        const visitors = productVisitedEntries.map(entry => ({
+            _id: entry._id, // Using entry._id to ensure uniqueness
+            title: entry.productList?.title || "Unknown",
+            visitorName: entry.visitor?.name || "",
+            visitorEmail: entry.visitor?.email || "",
+            visitorPhone: entry.visitor?.phone || "",
+            companyName: entry.visitor?.companyName || "",
+            visitedCount: entry.visitedCount, // Include visit count for reference
+            createdAt: entry.createdAt,
+            updatedAt: entry.updatedAt
+        }));
 
         const successObj = successResponse('most viewed details', visitors);
         res.status(successObj.status).send(successObj);
@@ -156,6 +150,7 @@ exports.getVisitorsByMostViewed = async (req, res) => {
         res.status(500).json({ message: 'Error fetching most viewed details', error });
     }
 };
+
 
 
 exports.getVisitorsByMostReviewed = async (req, res) => {
