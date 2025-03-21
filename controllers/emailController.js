@@ -292,7 +292,7 @@ emailController.sendBookingRequestMail = async function (data) {
         from: "enquiry@neofairs.com",
         cc: "enquiry@neofairs.com",
         to: visitor.email,
-        subject: "DEV - Meeting Reminder",
+        subject: "DEV - Meeting Request Submitted",
         html: htmlToSend,
       });
     }
