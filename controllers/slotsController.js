@@ -163,9 +163,9 @@ exports.listSlots = async (req, res) => {
 
 exports.bookSlot = async (req, res) => {
   try {
-    const { visitorId, exhibitorId, slotDate, time, status, timeZone, duration } = req.body;
+    const { visitorId, exhibitorId, slotDate, time, status, timeZone, duration, stallId } = req.body;
 
-    if (!visitorId || !exhibitorId || !slotDate || !time || !timeZone) {
+    if (!visitorId || !exhibitorId || !stallId || !slotDate || !time || !timeZone) {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
 
@@ -219,6 +219,7 @@ exports.bookSlot = async (req, res) => {
       const newPendingBooking = new Booking({
         visitorId,
         exhibitorId,
+        stallId,
         slotTime: time,
         status: 'pending', // New booking with status 'pending'
         timeZone,
@@ -232,6 +233,7 @@ exports.bookSlot = async (req, res) => {
     const newBooking = new Booking({
       visitorId,
       exhibitorId,
+      stallId,
       slotTime: time,
       status: status || 'pending', // Default to 'pending' if no status is provided
       timeZone,
@@ -288,41 +290,44 @@ exports.sendBookingApproveRejectMail = async (req, res) => {
 
 exports.listBookedSlots = async (req, res) => {
   try {
-    // Extract visitorId and optional date from the query parameters
     const { visitorId, date } = req.query;
 
-    // Validate that visitorId is provided
     if (!visitorId) {
       return res.status(400).json({ success: false, message: 'visitorId is required' });
     }
 
-    // Initialize a filter object
     const filter = { visitorId };
 
-    // If date is provided, filter bookings for that date (assuming date format is YYYY-MM-DD)
     if (date) {
       const startOfDay = moment(date).startOf('day').toDate();
       const endOfDay = moment(date).endOf('day').toDate();
-
-      // Add date range filter for slotTime
       filter.slotTime = { $gte: startOfDay, $lte: endOfDay };
     }
 
-    // Find all bookings for the visitor that match the filter
-    const bookedSlots = await Booking.find(filter).populate('exhibitorId', 'companyName').sort({ updatedAt: -1 }); // Assuming exhibitorId references an exhibitor model with companyName field
+    // Find all bookings with related data
+    const bookedSlots = await Booking.find(filter)
+      .populate('exhibitorId', 'companyName')
+      .populate('stallId', 'stallName meeting_details')
+      .sort({ createdAt: -1 });
 
-    // If no slots are found, return an empty list
     if (!bookedSlots.length) {
       return res.json({ success: true, data: [], message: 'No booked slots found for this visitor.' });
     }
 
-    // Map bookedSlots to the desired response structure
     const responseData = bookedSlots.map((slot, index) => {
-      const timezone = slot.timeZone; // Use a default timezone if not available
-
-      // Convert and format slot time based on the stored timezone
+      const timezone = slot.timeZone;
       const formattedDate = moment(slot.slotTime).tz(timezone).format('YYYY-MM-DD');
       const formattedTime = moment(slot.slotTime).tz(timezone).format('HH:mm A');
+
+      // Get the end of the day based on the slot's timezone
+      const endOfDay = moment(slot.slotTime).tz(timezone).endOf('day');
+
+      // Check if the meeting start time is within the current day
+      const currentTime = moment().tz(timezone);
+      const meetingStartTime = moment(slot.slotTime).tz(timezone);
+
+      // If the current time is between the start time and the end of the day, set meetingStarted = true
+      const meetingStarted = currentTime.isBetween(meetingStartTime, endOfDay, 'minute', '[)');
 
       return {
         _id: slot._id,
@@ -330,17 +335,16 @@ exports.listBookedSlots = async (req, res) => {
         Date: formattedDate,
         Time: formattedTime,
         Timezone: timezone,
-        ExhibitorId: slot.exhibitorId._id || 'N/A', // Default to 'N/A' if company name is unavailable
-        ExhibitorCompanyName: slot.exhibitorId.companyName || 'N/A', // Default to 'N/A' if company name is unavailable
-        Status: slot.status || 'N/A', // Default to 'N/A' if status is unavailable
-        MeetingLink: slot.meetingLink || '', // Default to empty if meeting link is not available
-        Duration: slot.duration || '', // Default to empty if meeting link is not available
+        ExhibitorCompanyName: slot.exhibitorId.companyName || 'N/A',
+        Status: slot.status || 'N/A',
+        DefaultMeeting: slot?.stallId?.meeting_details?.meetingDefaultType || true,
+        MeetingLink: slot?.stallId?.meeting_details?.meetingUrl || '',
+        Duration: slot.duration || '',
+        meetingStarted: meetingStarted
       };
     });
 
-    // Respond with the formatted data
     res.json({ success: true, data: responseData });
-
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Internal server error' });

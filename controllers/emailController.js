@@ -327,6 +327,7 @@ emailController.sendBookingRequestMail = async function (data) {
 };
 
 emailController.sendBookingNotifyVisitorMail = async (req, res) => {
+  console.log(req.body, `&&&&&&&&&&&&&&&&&&&&&&!!!`)
   const { visitorId, exhibitorId, slotDetails, minutesLeft } = req.body;
   try {
     // Fetch the visitor and exhibitor details
