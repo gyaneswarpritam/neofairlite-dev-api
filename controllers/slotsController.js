@@ -335,6 +335,7 @@ exports.listBookedSlots = async (req, res) => {
         Date: formattedDate,
         Time: formattedTime,
         Timezone: timezone,
+        ExhibitorId: slot.exhibitorId._id || 'N/A',
         ExhibitorCompanyName: slot.exhibitorId.companyName || 'N/A',
         Status: slot.status || 'N/A',
         DefaultMeeting: slot?.stallId?.meeting_details?.meetingDefaultType || true,
