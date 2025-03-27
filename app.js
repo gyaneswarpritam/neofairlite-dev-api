@@ -19,6 +19,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const exhibitorMessageRoutes = require('./routes/exhibitorMessageRoutes');
+require("./cronJob");
 
 // Initialize Express app
 const app = express();

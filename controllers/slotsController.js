@@ -9,6 +9,7 @@ const { successResponse } = require("../utils/sendResponse.js");
 const Booking = require("../models/Booking.js");
 const mongoose = require("mongoose");
 const emailController = require("./emailController.js");
+const { scheduleNotifications } = require("../cronJob.js");
 
 const generateSlotsForDate = (selectedDate, startTime, endTime, duration, timeZone) => {
   const slots = [];
@@ -824,6 +825,8 @@ exports.changeStatus = async (req, res) => {
     if (!response) {
       return res.status(404).json({ success: false, message: "Meeting not found or already deleted" });
     }
+
+    scheduleNotifications(response);
 
     const successObj = successResponse('Slot Status Updated', response);
     return res.status(successObj.status).send(successObj);
