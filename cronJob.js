@@ -35,8 +35,8 @@ const scheduleNotifications = (meeting) => {
             console.log(`Scheduling notification for ${visitorId.email} & ${exhibitorId.email} in ${delay / 60000} minutes`);
 
             setTimeout(async () => {
-                await sendNotifyMeetingVisitor(visitorId, exhibitorId, minBefore);
-                await sendNotifyMeetingExhibitor(visitorId, exhibitorId, minBefore);
+                await sendNotifyMeetingVisitor(visitorId, exhibitorId, slotTime, minBefore);
+                await sendNotifyMeetingExhibitor(visitorId, exhibitorId, slotTime, minBefore);
                 console.log(`Notification sent (${minBefore} min before meeting)`);
             }, delay);
         }

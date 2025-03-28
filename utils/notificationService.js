@@ -32,7 +32,7 @@ const handlebarOptions = {
 transporter.use("compile", hbs(handlebarOptions));
 
 // Send email & WhatsApp notification
-const sendNotifyMeetingVisitor = async (visitor, exhibitor, minutesLeft) => {
+const sendNotifyMeetingVisitor = async (visitor, exhibitor, slotTime, minutesLeft) => {
     if (!visitor || !exhibitor) return;
 
     const templatePath = path.join(__dirname, "../templates", "MEETING_REQUEST_NOTIFY_VISITOR_MAIL.html");
@@ -43,7 +43,7 @@ const sendNotifyMeetingVisitor = async (visitor, exhibitor, minutesLeft) => {
         visitorName: visitor.name,
         exhibitorName: exhibitor.name,
         exhibitorCompany: exhibitor.companyName,
-        slotDate: exhibitor.slotTime,
+        slotDate: slotTime,
         minutesLeft,
         exhibitorEmail: exhibitor.email,
     });
@@ -61,7 +61,7 @@ const sendNotifyMeetingVisitor = async (visitor, exhibitor, minutesLeft) => {
     visitor.phone && sendPhoneMessage(visitor.phone, `Your meeting with ${exhibitor?.name} is in ${minutesLeft} minutes.`);
 };
 
-const sendNotifyMeetingExhibitor = async (visitor, exhibitor, minutesLeft) => {
+const sendNotifyMeetingExhibitor = async (visitor, exhibitor, slotTime, minutesLeft) => {
     if (!visitor || !exhibitor) return;
 
     const templatePath = path.join(__dirname, "../templates", "MEETING_REQUEST_NOTIFY_EXHIBITOR_MAIL.html");
@@ -73,7 +73,7 @@ const sendNotifyMeetingExhibitor = async (visitor, exhibitor, minutesLeft) => {
         visitorEmail: visitor.email,
         visitorCompany: visitor.companyName,
         exhibitorName: exhibitor.name,
-        slotDate: exhibitor.slotTime,
+        slotDate: slotTime,
         minutesLeft,
         exhibitorEmail: exhibitor.email,
     });

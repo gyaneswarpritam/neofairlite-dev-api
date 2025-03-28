@@ -820,7 +820,9 @@ exports.changeStatus = async (req, res) => {
       {
         new: true,
       }
-    );
+    )
+      .populate("visitorId")  // Populate visitor details
+      .populate("exhibitorId");  // Populate exhibitor details
 
     if (!response) {
       return res.status(404).json({ success: false, message: "Meeting not found or already deleted" });
