@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Meeting with Shapes is Confirmed!</title>
+    <title>Your Meeting with {{ fair_name}} is Confirmed!</title>
   </head>
   <body
     style="
@@ -51,7 +51,7 @@
           "
         >
           <img
-            src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png"
+            src="{{ BASE_URL_IMAGE_URL }}logo/LOGO-BLACK.png"
             alt="logo"
             height="70px"
             style="border: 0; display: block; padding-bottom: 20px"
@@ -65,7 +65,7 @@
           style="background: #f7f7f7; color: #ffffff;padding-bottom: 1rem;"
         >
           <h1 style="margin: 0; font-size: 30px; font-weight: 600; color: #000">
-            Your Meeting with Shapes is Confirmed!
+            Your Meeting with {{ fair_name}} is Confirmed!
           </h1>
         </td>
       </tr>
@@ -80,9 +80,9 @@
           font-size: 16px;
           line-height: 28px;
           color: #4a5566;">
-            Great news! Your meeting request with Shapes has been confirmed.
+            Great news! Your meeting request with {{ fair_name}} has been confirmed.
             We’re excited to facilitate your upcoming face-to-face meeting on
-            <b>Shapes Virtual Stall</b>.
+            <b>{{ fair_name}} Virtual Stall</b>.
           </p>
           <br />
           <p style="margin: 0;
@@ -139,7 +139,7 @@
           >
           <b>What to expect:</b>
           <ul style="font-size: 16px;color: #4a5566;">
-            <li>Connect with Shapes’ decision makers to discuss products, services, and more.</li>
+            <li>Connect with {{fair_name}}’ decision makers to discuss products, services, and more.</li>
             <li>Engage in real-time conversations through our platform for a seamless experience.</li>
             <li>Prepare any questions or topics you’d like to discuss to make the most of your meeting.</li>
           </ul>
@@ -152,7 +152,7 @@
               color: #4a5566;
             "
           >
-          If you have any questions or need assistance, feel free to contact us at <b><a href="mailto:crm2@shapesproducts.in">crm2@shapesproducts.in</a></b>. Our team is here to ensure you have the best experience.
+          If you have any questions or need assistance, feel free to contact us at <b><a href="mailto:{{ company_email_to_contact}}">{{ company_email_to_contact}}</a></b>. Our team is here to ensure you have the best experience.
           </p>
           <p
             style="
@@ -176,7 +176,7 @@
           font-size: 16px;
           line-height: 28px;
           color: #4a5566;
-        "><b>The Shapes Team</b></p>
+        "><b>The {{ fair_name}} Team</b></p>
         </td>
       </tr>
       <tr style="background: #ffffff">
@@ -214,9 +214,9 @@
                       font-size: 18px;
                     "
                   >
-                    Shapes
+                    {{ fair_name}}
                   </p>
-                  <!-- <img src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
+                  <!-- <img src="{{ BASE_URL_IMAGE_URL }}logo/LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
                 </div>
               </tr>
               <tr>
@@ -255,7 +255,7 @@
                           "
                         >
                           <a
-                            href="https://www.facebook.com/shapesproducts"
+                            href="{{ facebook_url }}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -278,7 +278,7 @@
                           "
                         >
                           <a
-                            href="https://www.instagram.com/shapesproducts/"
+                            href="{{ insta_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -302,7 +302,7 @@
                           "
                         >
                           <a
-                            href="https://www.linkedin.com/in/ashishjain1983/"
+                            href="{{ linkedin_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -325,7 +325,7 @@
                           "
                         >
                           <a
-                            href="https://www.youtube.com/@ShapesProducts"
+                            href="{{ youtube_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -348,7 +348,7 @@
                           "
                         >
                           <a
-                            href="https://wa.me/9896111273"
+                            href="https://wa.me/{{ whatsapp_url }}{{ whatsapp_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -370,7 +370,7 @@
                           "
                         >
                           <a
-                            href="https://www.shapesproducts.in/"
+                            href="{{ website_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -378,7 +378,7 @@
                             "
                             target="_blank"
                             data-saferedirecturl=""
-                            >Shapes</a
+                            >{{ fair_name}}</a
                           >
                         </td>
                       </tr>
@@ -517,7 +517,7 @@
                 <td align="center">
                   <a href="https://neofairs.com/" target="_blank">
                     <img
-                      src="https://shapes.neofairs.com/images/logo/neo-fairs-lite-logo.png"
+                      src="{{ BASE_URL_IMAGE_URL }}logo/neo-fairs-lite-logo.png"
                       alt="Logo"
                       style="width: 200px"
                     />
@@ -546,7 +546,7 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-06.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-06.png"
                       alt="Facebook"
                       style="width: 25px; height: 25px"
                     />
@@ -556,7 +556,7 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-04.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-04.png"
                       alt="Instagram"
                       style="width: 25px; height: 25px"
                     />
@@ -566,7 +566,7 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-02.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-02.png"
                       alt="LinkedIn"
                       style="width: 25px; height: 25px"
                     />
@@ -576,17 +576,17 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-05.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-05.png"
                       alt="youtube"
                       style="width: 25px; height: 25px"
                     />
                   </a>
                   <a
-                    href="https://wa.me/9943071118"
+                    href="https://wa.me/{{ whatsapp_url }}9943071118"
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-03.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-03.png"
                       alt="Whatsapp"
                       style="width: 25px; height: 25px"
                     />

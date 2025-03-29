@@ -51,7 +51,7 @@
           "
         >
           <img
-            src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png"
+            src="{{ BASE_URL_IMAGE_URL }}logo/LOGO-BLACK.png"
             alt="logo"
             height="70px"
             style="border: 0; display: block; padding-bottom: 20px"
@@ -129,7 +129,7 @@
               color: #4a5566;
             "
           >
-          If you have any questions or need assistance, feel free to contact us at <b><a href="mailto:crm2@shapesproducts.in">crm2@shapesproducts.in</a></b>. Our team is here to ensure you have the best experience.
+          If you have any questions or need assistance, feel free to contact us at <b><a href="mailto:{{ company_email_to_contact}}">{{ company_email_to_contact}}</a></b>. Our team is here to ensure you have the best experience.
           </p>
           <p
             style="
@@ -153,7 +153,7 @@
           font-size: 16px;
           line-height: 28px;
           color: #4a5566;
-        "><b>The Shapes Team</b></p>
+        "><b>The {{ fair_name}} Team</b></p>
         </td>
       </tr>
       <tr style="background: #ffffff">
@@ -191,9 +191,9 @@
                       font-size: 18px;
                     "
                   >
-                    Shapes
+                    {{ fair_name}}
                   </p>
-                  <!-- <img src="https://shapes.neofairs.com/images/logo/SHAPES_LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
+                  <!-- <img src="{{ BASE_URL_IMAGE_URL }}logo/LOGO-BLACK.png" alt="" height="30px" style="padding: 0px 10px 20px 0px;"> -->
                 </div>
               </tr>
               <tr>
@@ -232,7 +232,7 @@
                           "
                         >
                           <a
-                            href="https://www.facebook.com/shapesproducts"
+                            href="{{ facebook_url }}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -255,7 +255,7 @@
                           "
                         >
                           <a
-                            href="https://www.instagram.com/shapesproducts/"
+                            href="{{ insta_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -279,7 +279,7 @@
                           "
                         >
                           <a
-                            href="https://www.linkedin.com/in/ashishjain1983/"
+                            href="{{ linkedin_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -302,7 +302,7 @@
                           "
                         >
                           <a
-                            href="https://www.youtube.com/@ShapesProducts"
+                            href="{{ youtube_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -325,7 +325,7 @@
                           "
                         >
                           <a
-                            href="https://wa.me/9896111273"
+                            href="https://wa.me/{{ whatsapp_url }}{{ whatsapp_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -347,7 +347,7 @@
                           "
                         >
                           <a
-                            href="https://www.shapesproducts.in/"
+                            href="{{ website_url}}"
                             style="
                               color: #636262;
                               text-decoration: none;
@@ -355,7 +355,7 @@
                             "
                             target="_blank"
                             data-saferedirecturl=""
-                            >Shapes</a
+                            >{{ fair_name}}</a
                           >
                         </td>
                       </tr>
@@ -494,7 +494,7 @@
                 <td align="center">
                   <a href="https://neofairs.com/" target="_blank">
                     <img
-                      src="https://shapes.neofairs.com/images/logo/neo-fairs-lite-logo.png"
+                      src="{{ BASE_URL_IMAGE_URL }}logo/neo-fairs-lite-logo.png"
                       alt="Logo"
                       style="width: 200px"
                     />
@@ -523,7 +523,7 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-06.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-06.png"
                       alt="Facebook"
                       style="width: 25px; height: 25px"
                     />
@@ -533,7 +533,7 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-04.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-04.png"
                       alt="Instagram"
                       style="width: 25px; height: 25px"
                     />
@@ -543,7 +543,7 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-02.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-02.png"
                       alt="LinkedIn"
                       style="width: 25px; height: 25px"
                     />
@@ -553,17 +553,17 @@
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-05.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-05.png"
                       alt="youtube"
                       style="width: 25px; height: 25px"
                     />
                   </a>
                   <a
-                    href="https://wa.me/9943071118"
+                    href="https://wa.me/{{ whatsapp_url }}9943071118"
                     style="text-decoration: none; margin: 0 10px"
                   >
                     <img
-                      src="https://shapes.neofairs.com/images/icons/ICONS-03.png"
+                      src="{{ BASE_URL_IMAGE_URL }}icons/ICONS-03.png"
                       alt="Whatsapp"
                       style="width: 25px; height: 25px"
                     />

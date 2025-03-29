@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Verification - Shapes</title>
+    <title>Email Verification - {{ fair_name}}</title>
     <style>
       body,
       table,
@@ -94,10 +94,10 @@
       <tr>
         <td class="header">
           <img
-            src="https://shapes.neofairs.com/images/logo-white.png"
-            alt="Shapes Logo"
+            src="{{ BASE_URL_IMAGE_URL }}logo-white.png"
+            alt="{{ fair_name}} Logo"
           />
-          <h1>Welcome to Shapes</h1>
+          <h1>Welcome to {{ fair_name}}</h1>
         </td>
       </tr>
       <tr>
@@ -118,24 +118,24 @@
             All rights reserved.
           </p>
           <div class="social-media">
-            <a href="https://www.facebook.com/shapesproducts" target="_blank">
+            <a href="{{ facebook_url }}" target="_blank">
               <img
-                src="https://shapes.neofairs.com/images/facebook-email.png"
+                src="{{ BASE_URL_IMAGE_URL }}facebook-email.png"
                 alt="Facebook"
               />
             </a>
-            <a href="https://www.instagram.com/shapesproducts/" target="_blank">
+            <a href="{{ insta_url}}" target="_blank">
               <img
-                src="https://shapes.neofairs.com/images/instagram.png"
+                src="{{ BASE_URL_IMAGE_URL }}instagram.png"
                 alt="Twitter"
               />
             </a>
             <a
-              href="https://www.linkedin.com/in/ashishjain1983/"
+              href="{{ linkedin_url}}"
               target="_blank"
             >
               <img
-                src="https://shapes.neofairs.com/images/linkedin-email.png"
+                src="{{ BASE_URL_IMAGE_URL }}linkedin-email.png"
                 alt="LinkedIn"
               />
             </a>

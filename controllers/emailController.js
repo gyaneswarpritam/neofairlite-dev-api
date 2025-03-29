@@ -15,6 +15,7 @@ const Exhibitor = require("../models/Exhibitor");
 const Visitor = require("../models/Visitor");
 const { sendPhoneMessage } = require("../utils/otpService");
 const ExhibitorChildUser = require('../models/ExhibitorChildUser');
+const { insta_url, youtube_url, website_url, facebook_url, linkedin_url, whatsapp_url, fair_name, company_email_to_contact, base_url } = require('../config/config');
 var transporter = nodemailer.createTransport(
   ses({
     accessKeyId: awsKeys.key,
@@ -61,7 +62,20 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
 
     // Generate verification URL and populate the template
     const verificationUrl = `${baseUrl}/visitor-verify?token=${verificationToken}`;
-    const htmlToSend = template({ verificationUrl, name: visitor.name });
+    const htmlToSend = template({
+      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, verificationUrl, name: visitor.name,
+      data: {
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url,
+        company_email_to_contact,
+        base_url
+      }
+    });
 
     // Send the email
     let info = await transporter.sendMail({
@@ -91,7 +105,19 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateSource);
 
-    const htmlToSend = template({ name: exhibitor.name });
+    const htmlToSend = template({
+      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: exhibitor.name,
+      data: {
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url,
+        company_email_to_contact
+      }
+    });
 
     // Send the verification email
     let info = await transporter.sendMail({
@@ -121,7 +147,19 @@ emailController.sendExhibitorChildRegisteredMail = async function (exhibitorId) 
     const templateSource = fs.readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateSource);
 
-    const htmlToSend = template({ name: exhibitorChild.name });
+    const htmlToSend = template({
+      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: exhibitorChild.name,
+      data: {
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url,
+        company_email_to_contact
+      }
+    });
 
     // Send the verification email
     let info = await transporter.sendMail({
@@ -143,7 +181,19 @@ emailController.sendApprovalExhibitorMail = async function (data) {
   const templateSource = fs.readFileSync(templatePath, 'utf-8');
   const template = handlebars.compile(templateSource);
 
-  const htmlToSend = template({ name: data.name });
+  const htmlToSend = template({
+    BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name,
+    data: {
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      base_url
+    }
+  });
 
   let info = await transporter.sendMail({
     from: "enquiry@neofairs.com",
@@ -161,7 +211,18 @@ emailController.sendForgotPassword = async function (data, password) {
   const templateSource = fs.readFileSync(templatePath, 'utf-8');
   const template = handlebars.compile(templateSource);
 
-  const htmlToSend = template({ name: data.name, password });
+  const htmlToSend = template({
+    BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name, password,
+    data: {
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url
+    }
+  });
 
   let info = await transporter.sendMail({
     from: "enquiry@neofairs.com",
@@ -179,7 +240,18 @@ emailController.sendForgotPasswordSuccess = async function (data) {
   const templateSource = fs.readFileSync(templatePath, 'utf-8');
   const template = handlebars.compile(templateSource);
 
-  const htmlToSend = template({ name: data.name });
+  const htmlToSend = template({
+    BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name,
+    data: {
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url
+    }
+  });
 
   let info = await transporter.sendMail({
     from: "enquiry@neofairs.com",
@@ -279,11 +351,22 @@ emailController.sendBookingRequestMail = async function (data) {
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
+      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL,
       visitorName: visitor?.name,
       exhibitorName: exhibitor?.name,
       exhibitorCompany: exhibitor?.companyName,
       slotDate: slotData?.date,
-      exhibitorEmail: exhibitor?.email
+      exhibitorEmail: exhibitor?.email,
+      data: {
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url,
+        company_email_to_contact
+      }
     });
 
     if (visitor.email) {
@@ -342,12 +425,23 @@ emailController.sendBookingNotifyVisitorMail = async (req, res) => {
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
+      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL,
       visitorName: visitor.name,
       exhibitorName: exhibitor.name,
       exhibitorCompany: exhibitor.companyName,
       slotDate: slotDetails.Date,
       minutesLeft: minutesLeft,
       exhibitorEmail: exhibitor.email,
+      data: {
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url,
+        company_email_to_contact
+      }
     });
 
     if (visitor.email) {
