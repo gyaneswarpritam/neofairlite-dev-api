@@ -329,7 +329,7 @@ exports.listBookedSlots = async (req, res) => {
 
       // If the current time is between the start time and the end of the day, set meetingStarted = true
       const meetingStarted = currentTime.isBetween(meetingStartTime, endOfDay, 'minute', '[)');
-
+      console.log(slot, `!!!!!!!!!!!!!!!!!!`)
       return {
         _id: slot._id,
         SerialNo: index + 1,
@@ -632,9 +632,7 @@ exports.getVisitorsList = async (req, res) => {
       },
       {
         $project: {
-          visitorName: {
-            $concat: ["$visitorDetails.firstName", " ", "$visitorDetails.lastName"]
-          },
+          visitorName: "$visitorDetails.name",
           visitorCompany: "$visitorDetails.companyName",
           visitorEmail: "$visitorDetails.email",
           visitorId: 1,

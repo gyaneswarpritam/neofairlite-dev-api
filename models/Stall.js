@@ -6,6 +6,7 @@ var stallSchema = new mongoose.Schema(
         stallDescription: { type: String },
         certifications: { type: Object },
         visitng_card_details: { type: Object },
+        meeting_details: { type: Object },
         stall_details: { type: Object },
         social_media: { type: Object },
         stallImage: { type: String },
