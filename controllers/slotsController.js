@@ -340,7 +340,7 @@ exports.listBookedSlots = async (req, res) => {
         ExhibitorCompanyName: slot.exhibitorId.companyName || 'N/A',
         Status: slot.status || 'N/A',
         DefaultMeeting: slot?.stallId?.meeting_details?.meetingDefaultType || true,
-        MeetingLink: slot?.stallId?.meeting_details?.meetingUrl || '',
+        MeetingLink: slot?.stallId?.meeting_details?.meetingUrl || 'N/A',
         Duration: slot.duration || '',
         meetingStarted: meetingStarted
       };
@@ -523,6 +523,15 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
       const formattedEndTime = moment(slot.slotTime).add(durationMinutes, 'minutes').tz(timezone).format('HH:mm A');
       const timeRange = `${formattedStartTime} - ${formattedEndTime}`;
 
+      // Get the end of the day based on the slot's timezone
+      const endOfDay = moment(slot.slotTime).tz(timezone).endOf('day');
+      // Check if the meeting start time is within the current day
+      const currentTime = moment().tz(timezone);
+      const meetingStartTime = moment(slot.slotTime).tz(timezone);
+
+      // If the current time is between the start time and the end of the day, set meetingStarted = true
+      const meetingStarted = currentTime.isBetween(meetingStartTime, endOfDay, 'minute', '[)');
+
       return {
         SerialNo: index + 1,
         Date: formattedDate,
@@ -534,7 +543,8 @@ exports.listBookedSlotsExhibitor = async (req, res) => {
         VisitorEmail: slot.visitorId?.email || 'N/A',
         Status: slot.status || 'N/A',
         MeetingLink: slot.meetingLink || '',
-        Duration: slot.duration || 'N/A'
+        Duration: slot.duration || 'N/A',
+        meetingStarted: meetingStarted
       };
     });
 
@@ -668,6 +678,16 @@ exports.getVisitorsList = async (req, res) => {
         const endDate = moment(item?.slotTime)
           .add(item?.duration || 0, "minutes")
           .toISOString();
+        const timezone = item.timeZone || 'UTC';
+        // Get the end of the day based on the slot's timezone
+        const endOfDay = moment(item.slotTime).tz(timezone).endOf('day');
+        // Check if the meeting start time is within the current day
+        const currentTime = moment().tz(timezone);
+        const meetingStartTime = moment(item.slotTime).tz(timezone);
+
+        // If the current time is between the start time and the end of the day, set meetingStarted = true
+        const meetingStarted = currentTime.isBetween(meetingStartTime, endOfDay, 'minute', '[)');
+
 
         return {
           SerialNo,
@@ -686,6 +706,7 @@ exports.getVisitorsList = async (req, res) => {
           meetingId: item?._id,
           meetingLink: item?.meetingLink || "N/A",
           defaultMeeting: item?.defaultMeeting ?? true,
+          meetingStarted: meetingStarted
         };
       });
       return res.status(200).json({ success: true, data: formattedResponse });
