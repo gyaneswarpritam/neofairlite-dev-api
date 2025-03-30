@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const handlebars = require("handlebars");
+const moment = require("moment");
 
 var ses = require("nodemailer-ses-transport");
 const hbs = require("nodemailer-express-handlebars");
@@ -11,7 +12,7 @@ const awsKeys = {
 };
 let nodemailer = require("nodemailer");
 const { sendPhoneMessage } = require("./otpService");
-const { BASE_URL_IMAGE_URL } = require("../config/config");
+const { BASE_URL_IMAGE_URL, fair_name, insta_url, youtube_url, website_url, facebook_url, linkedin_url, whatsapp_url } = require("../config/config");
 var transporter = nodemailer.createTransport(
     ses({
         accessKeyId: awsKeys.key,
@@ -44,9 +45,17 @@ const sendNotifyMeetingVisitor = async (visitor, exhibitor, slotTime, minutesLef
         visitorName: visitor.name,
         exhibitorName: exhibitor.name,
         exhibitorCompany: exhibitor.companyName,
-        slotDate: slotTime,
+        slotDate: slotTime ? moment(slotTime).format("YYYY-MM-DD") : slotTime,
         minutesLeft,
         exhibitorEmail: exhibitor.email,
+        BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url
     });
 
     if (visitor.email) {
@@ -74,7 +83,7 @@ const sendNotifyMeetingExhibitor = async (visitor, exhibitor, slotTime, minutesL
         visitorEmail: visitor.email,
         visitorCompany: visitor.companyName,
         exhibitorName: exhibitor.name,
-        slotDate: slotTime,
+        slotDate: slotTime ? moment(slotTime).format("YYYY-MM-DD") : slotTime,
         minutesLeft,
         exhibitorEmail: exhibitor.email,
         BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
