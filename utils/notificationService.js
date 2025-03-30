@@ -11,6 +11,7 @@ const awsKeys = {
 };
 let nodemailer = require("nodemailer");
 const { sendPhoneMessage } = require("./otpService");
+const { BASE_URL_IMAGE_URL } = require("../config/config");
 var transporter = nodemailer.createTransport(
     ses({
         accessKeyId: awsKeys.key,
@@ -76,6 +77,14 @@ const sendNotifyMeetingExhibitor = async (visitor, exhibitor, slotTime, minutesL
         slotDate: slotTime,
         minutesLeft,
         exhibitorEmail: exhibitor.email,
+        BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+        fair_name,
+        insta_url,
+        youtube_url,
+        website_url,
+        facebook_url,
+        linkedin_url,
+        whatsapp_url
     });
 
     if (exhibitor.email) {

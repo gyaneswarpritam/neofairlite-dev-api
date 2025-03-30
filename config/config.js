@@ -10,6 +10,7 @@ module.exports = {
     whatsapp_url: "9896111273",
     fair_name: "Shapes",
     company_email_to_contact: "crm2@shapesproducts.in",
+    BASE_URL_IMAGE_URL: "https://dev.neofairs.com/images/"
     // mongoURI: process.env.MONGO_URI || 'mongodb://localhost:27017/intecfair',
     // twilioAccountSid: 'your-account-sid',
     // twilioAuthToken: 'your-auth-token',

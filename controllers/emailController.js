@@ -15,7 +15,7 @@ const Exhibitor = require("../models/Exhibitor");
 const Visitor = require("../models/Visitor");
 const { sendPhoneMessage } = require("../utils/otpService");
 const ExhibitorChildUser = require('../models/ExhibitorChildUser');
-const { insta_url, youtube_url, website_url, facebook_url, linkedin_url, whatsapp_url, fair_name, company_email_to_contact, base_url } = require('../config/config');
+const { insta_url, youtube_url, website_url, facebook_url, linkedin_url, whatsapp_url, fair_name, company_email_to_contact, base_url, BASE_URL_IMAGE_URL } = require('../config/config');
 var transporter = nodemailer.createTransport(
   ses({
     accessKeyId: awsKeys.key,
@@ -63,8 +63,9 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     // Generate verification URL and populate the template
     const verificationUrl = `${baseUrl}/visitor-verify?token=${verificationToken}`;
     const htmlToSend = template({
-      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, verificationUrl, name: visitor.name,
-
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+      verificationUrl,
+      name: visitor.name,
       fair_name,
       insta_url,
       youtube_url,
@@ -106,7 +107,7 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
-      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: exhibitor.name,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL, name: exhibitor.name,
       fair_name,
       insta_url,
       youtube_url,
@@ -146,7 +147,8 @@ emailController.sendExhibitorChildRegisteredMail = async function (exhibitorId) 
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
-      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: exhibitorChild.name,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+      name: exhibitorChild.name,
       fair_name,
       insta_url,
       youtube_url,
@@ -178,7 +180,7 @@ emailController.sendApprovalExhibitorMail = async function (data) {
   const template = handlebars.compile(templateSource);
 
   const htmlToSend = template({
-    BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name,
+    BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL, name: data.name,
     fair_name,
     insta_url,
     youtube_url,
@@ -206,7 +208,7 @@ emailController.sendForgotPassword = async function (data, password) {
   const template = handlebars.compile(templateSource);
 
   const htmlToSend = template({
-    BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name, password,
+    BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL, name: data.name, password,
     fair_name,
     insta_url,
     youtube_url,
@@ -233,7 +235,7 @@ emailController.sendForgotPasswordSuccess = async function (data) {
   const template = handlebars.compile(templateSource);
 
   const htmlToSend = template({
-    BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name,
+    BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL, name: data.name,
     fair_name,
     insta_url,
     youtube_url,
@@ -286,14 +288,31 @@ emailController.sendBookingConfirmationMail = async function (data) {
       exhibitorName: exhibitor.name,
       exhibitorEmail: exhibitor.email,
       exhibitorCompany: exhibitor.companyName,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url
     });
     const htmlToSendExhibitor = templateExhibitor({
       visitorName: visitor.name,
       visitorCompany: visitor.companyName,
+      visitorEmail: visitor.email,
       slotDate: slotData.date,
       exhibitorName: exhibitor.name,
       exhibitorEmail: exhibitor.email,
       exhibitorCompany: exhibitor.companyName,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url
     });
 
     if (visitor.email) {
@@ -341,7 +360,7 @@ emailController.sendBookingRequestMail = async function (data) {
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
-      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
       visitorName: visitor?.name,
       exhibitorName: exhibitor?.name,
       exhibitorCompany: exhibitor?.companyName,
@@ -379,7 +398,16 @@ emailController.sendBookingRequestMail = async function (data) {
       visitorCompany: visitor?.companyName,
       exhibitorName: exhibitor?.name,
       slotDate: slotData?.date,
-      exhibitorEmail: exhibitor?.email
+      exhibitorEmail: exhibitor?.email,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      company_email_to_contact
     });
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
@@ -413,7 +441,7 @@ emailController.sendBookingNotifyVisitorMail = async (req, res) => {
     const template = handlebars.compile(templateSource);
 
     const htmlToSend = template({
-      BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
       visitorName: visitor.name,
       exhibitorName: exhibitor.name,
       exhibitorCompany: exhibitor.companyName,
@@ -471,7 +499,15 @@ emailController.sendBookingNotifyExhibitorMail = async (req, res) => {
       exhibitorName: exhibitor.name,
       slotDate: slotDetails.Date,
       minutesLeft: minutesLeft,
-      exhibitorEmail: exhibitor.email
+      exhibitorEmail: exhibitor.email,
+      BASE_URL_IMAGE_URL: BASE_URL_IMAGE_URL,
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url
     });
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
