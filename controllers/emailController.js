@@ -64,17 +64,17 @@ emailController.sendRegisteredMail = async function (visitorId, baseUrl) {
     const verificationUrl = `${baseUrl}/visitor-verify?token=${verificationToken}`;
     const htmlToSend = template({
       BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, verificationUrl, name: visitor.name,
-      data: {
-        fair_name,
-        insta_url,
-        youtube_url,
-        website_url,
-        facebook_url,
-        linkedin_url,
-        whatsapp_url,
-        company_email_to_contact,
-        base_url
-      }
+
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      company_email_to_contact,
+      base_url
+
     });
 
     // Send the email
@@ -107,16 +107,14 @@ emailController.sendExhibitorRegisteredMail = async function (exhibitorId) {
 
     const htmlToSend = template({
       BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: exhibitor.name,
-      data: {
-        fair_name,
-        insta_url,
-        youtube_url,
-        website_url,
-        facebook_url,
-        linkedin_url,
-        whatsapp_url,
-        company_email_to_contact
-      }
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      company_email_to_contact
     });
 
     // Send the verification email
@@ -149,16 +147,14 @@ emailController.sendExhibitorChildRegisteredMail = async function (exhibitorId) 
 
     const htmlToSend = template({
       BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: exhibitorChild.name,
-      data: {
-        fair_name,
-        insta_url,
-        youtube_url,
-        website_url,
-        facebook_url,
-        linkedin_url,
-        whatsapp_url,
-        company_email_to_contact
-      }
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      company_email_to_contact
     });
 
     // Send the verification email
@@ -183,16 +179,14 @@ emailController.sendApprovalExhibitorMail = async function (data) {
 
   const htmlToSend = template({
     BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name,
-    data: {
-      fair_name,
-      insta_url,
-      youtube_url,
-      website_url,
-      facebook_url,
-      linkedin_url,
-      whatsapp_url,
-      base_url
-    }
+    fair_name,
+    insta_url,
+    youtube_url,
+    website_url,
+    facebook_url,
+    linkedin_url,
+    whatsapp_url,
+    base_url
   });
 
   let info = await transporter.sendMail({
@@ -213,15 +207,13 @@ emailController.sendForgotPassword = async function (data, password) {
 
   const htmlToSend = template({
     BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name, password,
-    data: {
-      fair_name,
-      insta_url,
-      youtube_url,
-      website_url,
-      facebook_url,
-      linkedin_url,
-      whatsapp_url
-    }
+    fair_name,
+    insta_url,
+    youtube_url,
+    website_url,
+    facebook_url,
+    linkedin_url,
+    whatsapp_url
   });
 
   let info = await transporter.sendMail({
@@ -242,15 +234,13 @@ emailController.sendForgotPasswordSuccess = async function (data) {
 
   const htmlToSend = template({
     BASE_URL_IMAGE_URL: process.env.BASE_URL_IMAGE_URL, name: data.name,
-    data: {
-      fair_name,
-      insta_url,
-      youtube_url,
-      website_url,
-      facebook_url,
-      linkedin_url,
-      whatsapp_url
-    }
+    fair_name,
+    insta_url,
+    youtube_url,
+    website_url,
+    facebook_url,
+    linkedin_url,
+    whatsapp_url
   });
 
   let info = await transporter.sendMail({
@@ -357,16 +347,14 @@ emailController.sendBookingRequestMail = async function (data) {
       exhibitorCompany: exhibitor?.companyName,
       slotDate: slotData?.date,
       exhibitorEmail: exhibitor?.email,
-      data: {
-        fair_name,
-        insta_url,
-        youtube_url,
-        website_url,
-        facebook_url,
-        linkedin_url,
-        whatsapp_url,
-        company_email_to_contact
-      }
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      company_email_to_contact
     });
 
     if (visitor.email) {
@@ -432,16 +420,14 @@ emailController.sendBookingNotifyVisitorMail = async (req, res) => {
       slotDate: slotDetails.Date,
       minutesLeft: minutesLeft,
       exhibitorEmail: exhibitor.email,
-      data: {
-        fair_name,
-        insta_url,
-        youtube_url,
-        website_url,
-        facebook_url,
-        linkedin_url,
-        whatsapp_url,
-        company_email_to_contact
-      }
+      fair_name,
+      insta_url,
+      youtube_url,
+      website_url,
+      facebook_url,
+      linkedin_url,
+      whatsapp_url,
+      company_email_to_contact
     });
 
     if (visitor.email) {
