@@ -151,4 +151,36 @@ exports.getTrackLiveMeeting = async (req, res) => {
     }
 };
 
+exports.getTrackLiveMeeting = async (req, res) => {
+    try {
+        // Extract limit and offset from query parameters
+        // const { limit = 10, offset = 0 } = req.query;
+
+        const meetingTrack = await TrackLiveMeeting.find({})
+            .populate({
+                path: 'visitor',
+                select: 'name companyName email phone' // Select only the fields you need
+            })
+            .populate({
+                path: 'exhibitor',
+                select: 'name companyName email phone' // Select only the fields you need
+            })
+            .populate({
+                path: 'meetingId',
+                select: 'slotTime' // Select only the fields you need
+            })
+            // .skip(Number(offset)) // Skip the specified number of documents
+            // .limit(Number(limit)) // Limit the number of documents returned
+            .sort({ updatedAt: -1 })
+            .exec();
+        const totalCount = await TrackLiveMeeting.countDocuments();
+        // const totalPages = Math.ceil(totalCount / limit);
+        // const currentPage = Math.ceil(offset / limit) + 1;
+        const successObj = successResponseWithRecordCount('Track Live Meeting List', meetingTrack, totalCount);
+        res.status(successObj.status).send(successObj);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 

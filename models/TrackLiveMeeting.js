@@ -14,6 +14,7 @@ var TrackLiveMeeting = new mongoose.Schema(
         },
         meetingId: {
             type: mongoose.Schema.Types.ObjectId,
+            ref: "Booking"
         },
         joinTime: {
             type: Date,
