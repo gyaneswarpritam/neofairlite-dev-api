@@ -295,7 +295,8 @@ emailController.sendBookingConfirmationMail = async function (data) {
       website_url,
       facebook_url,
       linkedin_url,
-      whatsapp_url
+      whatsapp_url,
+      company_email_to_contact
     });
     const htmlToSendExhibitor = templateExhibitor({
       visitorName: visitor.name,
@@ -507,7 +508,8 @@ emailController.sendBookingNotifyExhibitorMail = async (req, res) => {
       website_url,
       facebook_url,
       linkedin_url,
-      whatsapp_url
+      whatsapp_url,
+      company_email_to_contact
     });
     // Send email to exhibitor
     let exhibitorInfo = await transporter.sendMail({
